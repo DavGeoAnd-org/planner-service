@@ -1,0 +1,90 @@
+name: Test Deployment of javalin-template
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+
+env:
+  SERVICE_ENV: test
+  REGISTRY: davgeoand9
+  REPOSITORY: javalin-template
+  AWS_REGION: us-east-1
+  S3_BUCKET: homeproject-services-s3-bucket-396607284401
+  ECS_TASK_DEFINITION_FILE: task-definition.json
+  ECS_CLUSTER: homeproject-services-test-ecs-cluster
+
+jobs:
+  deploy_to_test:
+    name: Create and deploy test image
+    runs-on: ubuntu-latest
+    environment: test
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            test:
+              - 'env_files/${{ env.SERVICE_ENV }}/*.env'
+
+      - name: Get Service Version
+        id: get-version
+        uses: jactions/maven-version@v1.2.0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build with Maven
+        run: mvn clean package
+
+      - name: docker login
+        run: |
+          docker login -u $REGISTRY -p ${{secrets.DOCKER_PASSWORD}}
+
+      - name: Push the Docker image
+        id: push-image
+        run: |
+          docker build -t $REGISTRY/$REPOSITORY:${{ steps.get-version.outputs.version }}-${GITHUB_SHA::7} .
+          docker image push -a $REGISTRY/$REPOSITORY
+          echo "image=$REGISTRY/$REPOSITORY:${{ steps.get-version.outputs.version }}-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      - name: Configure AWS Creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update .env in S3
+        if: steps.changes.outputs.test == 'true'
+        run: aws s3 cp env_files/${{ env.SERVICE_ENV }}/ s3://${{ env.S3_BUCKET }}/${{ env.REGISTRY }}/${{ env.SERVICE_ENV }}/ --recursive
+
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition --task-definition ${{ env.REPOSITORY }}-${{ env.SERVICE_ENV }} --query taskDefinition > ${{ env.ECS_TASK_DEFINITION_FILE }}
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.ECS_TASK_DEFINITION_FILE }}
+          container-name: ${{ env.REPOSITORY }}
+          image: ${{ steps.push-image.outputs.image }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.REPOSITORY }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true

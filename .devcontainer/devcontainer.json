@@ -1,0 +1,10 @@
+{
+  "name": "Java 21.0.5_11 Ubuntu 24.04",
+  "image": "eclipse-temurin:21.0.5_11-jdk-noble",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "none",
+      "installMaven": "true"
+    }
+  }
+}

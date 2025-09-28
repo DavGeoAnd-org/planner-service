@@ -1,19 +1,24 @@
 services:
-  javalin-template:
-    image: local/javalin-template:latest
-    container_name: javalin-template
-    hostname: javalin-template-local
+  planner-service:
+    image: local/planner-service:latest
+    container_name: planner-service
+    hostname: planner-service-local
     env_file:
       - env_files/local/service.env
       - env_files/local/otel.env
     ports:
       - "8080:8080"
     networks:
-      - javalin-template-bridge-network
+      - planner-service-bridge-network
+    depends_on:
+      surrealdb:
+        condition: service_started
+      otel-collector-service:
+        condition: service_started
   otel-collector-service:
     image: davgeoand9/otel-collector-service:latest
-    container_name: javalin-template-otel-collector-service
-    hostname: javalin-template-local
+    container_name: planner-service-otel-collector-service
+    hostname: planner-service-local
     ports:
       - "4317:4317"
       - "4318:4318"
@@ -21,8 +26,35 @@ services:
       - "55678:55678"
       - "55679:55679"
     networks:
-      - javalin-template-bridge-network
+      - planner-service-bridge-network
+  surrealdb:
+    image: surrealdb/surrealdb:latest
+    container_name: planner-service-surrealdb
+    hostname: planner-service-local
+    user: root
+    ports:
+      - "8000:8000"
+    networks:
+      - planner-service-bridge-network
+    volumes:
+      - surreal-data:/data
+      - surreal-data:/logs
+    entrypoint: /surreal start --user root --pass root rocksdb:/data/mydatabase.db
+  surrealist:
+    image: surrealdb/surrealist:latest
+    container_name: planner-service-surrealist
+    hostname: planner-service-local
+    ports:
+      - "8001:8080"
+    networks:
+      - planner-service-bridge-network
+    depends_on:
+      surrealdb:
+        condition: service_started
 
 networks:
-  javalin-template-bridge-network:
-    name: javalin-template-bridge
+  planner-service-bridge-network:
+    name: planner-service-bridge
+
+volumes:
+  surreal-data:

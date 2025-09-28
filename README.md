@@ -1,4 +1,4 @@
-# javalin-template
+# planner-service
 
 ## Create repo in Github
 
@@ -7,11 +7,14 @@
 ## Create project local
 
 * Clone repo locally
-* Find all instances of javalin-template and update it to the repo name
+* Find all instances of planner-service and update it to the repo name
 * Change service.context_path in service.properties
+* Change service.namespace in otel.env files
+* Update version in pom.xml
 * Add the following env variables to the run configuration
-    * (Required) OTEL_SERVICE_NAME - javalin-template
+    * (Required) OTEL_SERVICE_NAME - planner-service
     * JAVALIN_SERVICE_LOGGING - DEBUG
+* Run maven install
 
 ## VPC
 
@@ -77,8 +80,8 @@
 * Create
     * Bucket type: General purpose
     * Bucket name: homeproject-services-s3-bucket-396607284401
-    * Create folder -> Folder name: javalin-template
-    * In javalin-template folder
+    * Create folder -> Folder name: planner-service
+    * In planner-service folder
         * Create folder -> Folder name: [test|prod]
         * add .env files
 
@@ -128,15 +131,15 @@
         * Subnets: enable only public
         * Security group: Security group ID of 'Security Group - for otel-collector'
 
-## ECS Task Definition - javalin-template (create manually before first deployment)
+## ECS Task Definition - planner-service (create manually before first deployment)
 
 * Create
-    * Task definition family: javalin-template-[test|prod]
+    * Task definition family: planner-service-[test|prod]
     * Launch type: AWS Fargate
     * Task size:
         * CPU: .25 -- Memory: .5
     * Container - 1:
-        * Name: javalin-template
+        * Name: planner-service
         * Image URI: use 'latest' for initial setup
         * Port mappings:
             * Container port: 8080 -- Protocol: TCP -- App protocol: HTTP
@@ -144,13 +147,13 @@
             * Add from file: .env files from homeproject-services-s3-bucket-396607284401
         * Log collection: disable log collection
 
-## ECS Service - javalin-template (create manually before first deployment)
+## ECS Service - planner-service (create manually before first deployment)
 
 * Create
     * Deploy from ecs task definition
     * Existing cluster: Name of 'ECS Cluster'
     * Compute options: Capacity provider strategy
-    * Service name: javalin-template
+    * Service name: planner-service
     * Desired tasks: 0
     * Service Connect:
         * Enable Use Service Connect
@@ -168,7 +171,7 @@
         * Listener: Use an existing listener -> 80:HTTP
         * Target group:
             * Create new target group
-            * Target group name: http-javalin-template-tg
+            * Target group name: http-planner-service-tg
             * Path pattern: /template/*
             * Evaluation order: 1 (or next available)
             * Health check path: /template/admin/health

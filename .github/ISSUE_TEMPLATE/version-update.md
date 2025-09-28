@@ -1,6 +1,6 @@
 ---
 name: Version Update
-about: update javalin-template version
+about: update planner-service version
 title: Version Update (Month Year)
 labels: aws, service
 assignees: DavGeoAnd

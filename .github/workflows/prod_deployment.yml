@@ -1,4 +1,4 @@
-name: Prod Deployment of javalin-template
+name: Prod Deployment of planner-service
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ on:
 env:
   SERVICE_ENV: prod
   REGISTRY: davgeoand9
-  REPOSITORY: javalin-template
+  REPOSITORY: planner-service
   AWS_REGION: us-east-1
   S3_BUCKET: homeproject-services-s3-bucket-396607284401
   ECS_TASK_DEFINITION_FILE: task-definition.json

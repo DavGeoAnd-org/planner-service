@@ -66,7 +66,7 @@ jobs:
 
       - name: Update .env in S3
         if: steps.changes.outputs.prod == 'true'
-        run: aws s3 cp env_files/${{ env.SERVICE_ENV }}/ s3://${{ env.S3_BUCKET }}/${{ env.REGISTRY }}/${{ env.SERVICE_ENV }}/ --recursive
+        run: aws s3 cp env_files/${{ env.SERVICE_ENV }}/ s3://${{ env.S3_BUCKET }}/${{ env.REPOSITORY }}/${{ env.SERVICE_ENV }}/ --recursive
 
       - name: Download task definition
         run: |

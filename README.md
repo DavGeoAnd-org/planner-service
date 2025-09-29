@@ -172,6 +172,6 @@
         * Target group:
             * Create new target group
             * Target group name: http-planner-service-tg
-            * Path pattern: /template/*
+            * Path pattern: /planner/*
             * Evaluation order: 1 (or next available)
-            * Health check path: /template/admin/health
+            * Health check path: /planner/admin/health

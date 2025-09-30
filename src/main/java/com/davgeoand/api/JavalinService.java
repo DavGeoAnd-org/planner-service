@@ -7,6 +7,7 @@ import com.davgeoand.api.exception.GroceryException;
 import com.davgeoand.api.exception.JavalinServiceException;
 import com.davgeoand.api.helper.Constants;
 import com.davgeoand.api.helper.ServiceProperties;
+import com.surrealdb.SurrealException;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.EndpointGroup;
 import io.javalin.event.LifecycleEventListener;
@@ -41,6 +42,10 @@ public class JavalinService {
         javalin.exception(GroceryException.MissingException.class, (e, context) -> {
             context.result(e.getMessage());
             context.status(HttpStatus.NOT_FOUND);
+        });
+        javalin.exception(SurrealException.class, (e, context) -> {
+            context.result(e.getMessage());
+            context.status(HttpStatus.INTERNAL_SERVER_ERROR);
         });
         log.info("Added exception handlers");
     }

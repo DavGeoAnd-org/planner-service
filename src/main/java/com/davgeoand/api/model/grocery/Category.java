@@ -16,4 +16,5 @@ public class Category {
     @JsonSerialize(using = RecordIdSerializer.class)
     @JsonDeserialize(using = RecordIdDeserializer.class)
     public RecordId id;
+    public String name;
 }

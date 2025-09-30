@@ -3,13 +3,8 @@ package com.davgeoand.api.data;
 import com.davgeoand.api.exception.JavalinServiceException;
 import com.davgeoand.api.helper.Constants;
 import com.davgeoand.api.helper.ServiceProperties;
-import com.davgeoand.api.model.grocery.Category;
-import com.davgeoand.api.model.grocery.Item;
-import com.davgeoand.api.model.grocery.Store;
-import com.surrealdb.Array;
-import com.surrealdb.RecordId;
-import com.surrealdb.Response;
-import com.surrealdb.Surreal;
+import com.davgeoand.api.model.grocery.*;
+import com.surrealdb.*;
 import com.surrealdb.signin.Root;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,10 +32,6 @@ public class GroceryDB {
                 .useDb("grocery")
                 .signin(new Root(SURREALDB_USERNAME, SURREALDB_PASSWORD));
         log.info("Initialized grocery db");
-    }
-
-    public static void close() {
-        driver.close();
     }
 
     public static Iterator<Item> selectAllItems() {
@@ -104,5 +95,39 @@ public class GroceryDB {
         Array results = response.take(0).getArray();
         log.debug("results - {}", results);
         return results.iterator(Item.class);
+    }
+
+    public static Item createAddItem(Item item) {
+        log.debug("item - {}", item);
+        return driver.create(Item.class, new RecordId("items", item.getName()), item);
+    }
+
+    public static Item updateUpdateItem(RecordId id, Item item) {
+        log.debug("id - {}", id);
+        log.debug("item - {}", item);
+        return driver.update(Item.class, id, UpType.MERGE, item);
+    }
+
+    public static Category createAddCategory(Category category) {
+        log.debug("category - {}", category);
+        return driver.create(Category.class, new RecordId("categories", category.getName()), category);
+    }
+
+    public static Store createAddStore(Store store) {
+        log.debug("store - {}", store);
+        return driver.create(Store.class, new RecordId("stores", store.getName()), store);
+    }
+
+    public static ProductOf relateAddProductOf(RecordId itemId, RecordId categoryId) {
+        log.debug("itemId - {}", itemId);
+        log.debug("categoryId - {}", categoryId);
+        return driver.relate(itemId, "product_of", categoryId).get(ProductOf.class);
+    }
+
+    public static SoldAt relateAddSoldAt(RecordId itemId, RecordId storeId, SoldAt soldAt) {
+        log.debug("itemId - {}", itemId);
+        log.debug("storeId - {}", storeId);
+        log.debug("soldAt - {}", soldAt);
+        return driver.relate(itemId, "sold_at", storeId, soldAt).get(SoldAt.class);
     }
 }

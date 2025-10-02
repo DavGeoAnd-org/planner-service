@@ -16,6 +16,8 @@ import static io.javalin.apibuilder.ApiBuilder.*;
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GroceryController {
+    public final static GroceryService groceryService = new GroceryService();
+
     public static @NotNull EndpointGroup getGroceryEndpoints() {
         return () -> {
             path("items", () -> {
@@ -54,20 +56,20 @@ public class GroceryController {
 
     private static void storeList(@NotNull Context context) {
         String id = context.pathParam("id");
-        context.json(GroceryService.storeList(id));
+        context.json(groceryService.storeList(id));
         context.status(HttpStatus.OK);
     }
 
     private static void updateStoreList(@NotNull Context context) {
         String id = context.pathParam("id");
         ListUpdate listUpdate = context.bodyAsClass(ListUpdate.class);
-        GroceryService.updateList(id, listUpdate);
+        groceryService.updateList(id, listUpdate);
         context.status(HttpStatus.ACCEPTED);
     }
 
     private static void allItemsForStore(@NotNull Context context) {
         String id = context.pathParam("id");
-        context.json(GroceryService.allItemsForStore(id));
+        context.json(groceryService.allItemsForStore(id));
         context.status(HttpStatus.OK);
     }
 
@@ -75,7 +77,7 @@ public class GroceryController {
         String itemId = context.pathParam("id");
         String storeId = context.pathParam("storeId");
         SoldAt soldAt = context.bodyAsClass(SoldAt.class);
-        context.json("Created: " + GroceryService.createSoldAt(itemId, storeId, soldAt).getId());
+        context.json("Created: " + groceryService.createSoldAt(itemId, storeId, soldAt).getId());
         context.status(HttpStatus.CREATED);
     }
 
@@ -83,80 +85,80 @@ public class GroceryController {
         String id = context.pathParam("id");
         String levelQueryParam = StringUtils.defaultIfBlank(context.queryParam("location"), "false");
         if (levelQueryParam.equals("true")) {
-            context.json(GroceryService.allStoresForItemWithLocation(id));
+            context.json(groceryService.allStoresForItemWithLocation(id));
         } else {
-            context.json(GroceryService.allStoresForItem(id));
+            context.json(groceryService.allStoresForItem(id));
         }
         context.status(HttpStatus.OK);
     }
 
     private static void allItemsForCategory(@NotNull Context context) {
         String id = context.pathParam("id");
-        context.json(GroceryService.allItemsForCategory(id));
+        context.json(groceryService.allItemsForCategory(id));
         context.status(HttpStatus.OK);
     }
 
     private static void createProductOf(@NotNull Context context) {
         String itemId = context.pathParam("id");
         String categoryId = context.pathParam("categoryId");
-        context.json("Created: " + GroceryService.createProductOf(itemId, categoryId).getId());
+        context.json("Created: " + groceryService.createProductOf(itemId, categoryId).getId());
         context.status(HttpStatus.CREATED);
     }
 
     private static void allCategoriesForItem(@NotNull Context context) {
         String id = context.pathParam("id");
-        context.json(GroceryService.allCategoriesForItem(id));
+        context.json(groceryService.allCategoriesForItem(id));
         context.status(HttpStatus.OK);
     }
 
     private static void store(@NotNull Context context) {
         String id = context.pathParam("id");
-        context.json(GroceryService.store(id));
+        context.json(groceryService.store(id));
         context.status(HttpStatus.FOUND);
     }
 
     private static void category(@NotNull Context context) {
         String id = context.pathParam("id");
-        context.json(GroceryService.category(id));
+        context.json(groceryService.category(id));
         context.status(HttpStatus.FOUND);
     }
 
     private static void item(@NotNull Context context) {
         String id = context.pathParam("id");
-        context.json(GroceryService.item(id));
+        context.json(groceryService.item(id));
         context.status(HttpStatus.FOUND);
     }
 
     private static void createStore(@NotNull Context context) {
         Store store = context.bodyAsClass(Store.class);
-        context.json("Created: " + GroceryService.createStore(store).getId());
+        context.json("Created: " + groceryService.createStore(store).getId());
         context.status(HttpStatus.CREATED);
     }
 
     private static void createCategory(@NotNull Context context) {
         Category category = context.bodyAsClass(Category.class);
-        context.json("Created: " + GroceryService.createCategory(category).getId());
+        context.json("Created: " + groceryService.createCategory(category).getId());
         context.status(HttpStatus.CREATED);
     }
 
     private static void createItem(@NotNull Context context) {
         Item item = context.bodyAsClass(Item.class);
-        context.json("Created: " + GroceryService.createItem(item).getId());
+        context.json("Created: " + groceryService.createItem(item).getId());
         context.status(HttpStatus.CREATED);
     }
 
     private static void allStores(@NotNull Context context) {
-        context.json(GroceryService.allStores());
+        context.json(groceryService.allStores());
         context.status(HttpStatus.OK);
     }
 
     private static void allCategories(@NotNull Context context) {
-        context.json(GroceryService.allCategories());
+        context.json(groceryService.allCategories());
         context.status(HttpStatus.OK);
     }
 
     private static void allItems(@NotNull Context context) {
-        context.json(GroceryService.allItems());
+        context.json(groceryService.allItems());
         context.status(HttpStatus.OK);
     }
 }

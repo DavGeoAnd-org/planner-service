@@ -14,9 +14,7 @@ import static io.javalin.apibuilder.ApiBuilder.get;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AdminController {
     public static @NotNull EndpointGroup getAdminEndpoints() {
-        return () -> {
-            get("health", AdminController::getHealthRequest);
-        };
+        return () -> get("health", AdminController::getHealthRequest);
     }
 
     private static void getHealthRequest(@NotNull Context context) {

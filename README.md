@@ -12,7 +12,6 @@
 * Change service.namespace in otel.env files
 * Update version in pom.xml
 * Add the following env variables to the run configuration
-    * (Required) OTEL_SERVICE_NAME - planner-service
     * JAVALIN_SERVICE_LOGGING - DEBUG
 * Run maven install
 

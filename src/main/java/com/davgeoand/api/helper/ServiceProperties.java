@@ -12,14 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServiceProperties {
     private static Properties properties;
-    private static final Pattern propertyPattern = Pattern.compile("\\[\\[.*::.*]]");
 
     public static void init(String... files) {
         log.info("Initializing service properties");
@@ -34,8 +31,6 @@ public class ServiceProperties {
                 System.exit(1);
             }
         }
-
-        assessFilesProperties();
         setOtlpProperties();
 
         log.debug("properties - {}", properties);
@@ -66,31 +61,6 @@ public class ServiceProperties {
 
     private static ConfigProperties otlpDefaultConfigProperties() {
         return DefaultConfigProperties.create(new HashMap<>(), ComponentLoader.forClassLoader(DefaultConfigProperties.class.getClassLoader()));
-    }
-
-    private static void assessFilesProperties() {
-        log.info("Assessing file properties");
-
-        properties.forEach((key, value) -> {
-            log.debug("key - {}, value - {}", key, value);
-            String valueStr = value.toString();
-            Matcher match = propertyPattern.matcher(valueStr);
-            if (match.find()) {
-                log.debug("Property that uses env: {} with value {}", key, value);
-                String valueStrUpdated = valueStr.replace("[", "").replace("]", "");
-                String[] valueSplit = valueStrUpdated.split("::");
-                String envValue = System.getenv(valueSplit[0]);
-                if (envValue != null) {
-                    log.debug("{} is using env value: {}", key, envValue);
-                    properties.replace(key, envValue);
-                } else {
-                    log.debug("{} is using default value: {}", key, valueSplit[1]);
-                    properties.replace(key, valueSplit[1]);
-                }
-            }
-        });
-
-        log.info("Assessed file properties");
     }
 
     public static Optional<String> getProperty(String property) {

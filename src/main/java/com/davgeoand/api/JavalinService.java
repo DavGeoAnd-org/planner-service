@@ -4,9 +4,7 @@ import com.davgeoand.api.controller.AdminController;
 import com.davgeoand.api.controller.GroceryController;
 import com.davgeoand.api.data.GroceryDB;
 import com.davgeoand.api.exception.GroceryException;
-import com.davgeoand.api.exception.JavalinServiceException;
 import com.davgeoand.api.helper.Constants;
-import com.davgeoand.api.helper.ServiceProperties;
 import com.surrealdb.SurrealException;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.EndpointGroup;
@@ -19,12 +17,9 @@ import static io.javalin.apibuilder.ApiBuilder.path;
 @Slf4j
 public class JavalinService {
     private final Javalin javalin;
-    private final String SERVICE_NAME = ServiceProperties.getProperty(Constants.SERVICE_NAME)
-            .orElseThrow(() -> new JavalinServiceException.MissingPropertyException(Constants.SERVICE_NAME));
-    private final String SERVICE_PORT = ServiceProperties.getProperty(Constants.SERVICE_PORT)
-            .orElseThrow(() -> new JavalinServiceException.MissingPropertyException(Constants.SERVICE_PORT));
-    private final String SERVICE_CONTEXT_PATH = ServiceProperties.getProperty(Constants.SERVICE_CONTEXT_PATH)
-            .orElseThrow(() -> new JavalinServiceException.MissingPropertyException(Constants.SERVICE_CONTEXT_PATH));
+    private final String SERVICE_NAME = Constants.SERVICE_NAME;
+    private final String SERVICE_PORT = Constants.SERVICE_PORT;
+    private final String SERVICE_CONTEXT_PATH = Constants.SERVICE_CONTEXT_PATH;
 
     public JavalinService() {
         log.info("Initializing {}", SERVICE_NAME);

@@ -1,6 +1,6 @@
 package com.davgeoand.api.data;
 
-import com.davgeoand.api.helper.Constants;
+import com.davgeoand.api.Constants;
 import com.davgeoand.api.model.grocery.*;
 import com.surrealdb.Array;
 import com.surrealdb.RecordId;
@@ -20,7 +20,6 @@ import java.util.Optional;
 public class GroceryDB {
     private final Surreal driver;
 
-    @WithSpan(kind = SpanKind.CLIENT)
     public GroceryDB() {
         log.info("Initializing grocery db");
         driver = new Surreal();

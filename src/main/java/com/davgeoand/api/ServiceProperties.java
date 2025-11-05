@@ -1,4 +1,4 @@
-package com.davgeoand.api.helper;
+package com.davgeoand.api;
 
 import io.opentelemetry.common.ComponentLoader;
 import io.opentelemetry.instrumentation.resources.ManifestResourceProvider;
@@ -16,13 +16,15 @@ import java.util.*;
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServiceProperties {
-    private static Properties properties;
+    private static final Properties properties = new Properties();
 
-    public static void init(String... files) {
+    public static void init(boolean setOtlp, String... files) {
         log.info("Initializing service properties");
         log.debug("files - {}", Arrays.toString(files));
 
-        properties = new Properties();
+        if (setOtlp) {
+            setOtlpProperties();
+        }
         for (String file : files) {
             try {
                 properties.load(ServiceProperties.class.getClassLoader().getResourceAsStream(file));
@@ -31,7 +33,6 @@ public class ServiceProperties {
                 System.exit(1);
             }
         }
-        setOtlpProperties();
 
         log.debug("properties - {}", properties);
         log.info("Initialized service properties");

@@ -1,4 +1,4 @@
-package com.davgeoand.api.helper;
+package com.davgeoand.api;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

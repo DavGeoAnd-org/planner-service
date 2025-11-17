@@ -1,0 +1,9 @@
+GET http://localhost:8080/planner/health/weightRecords
+###
+
+POST http://localhost:8080/planner/health/weightRecords
+content-type: application/json
+
+{
+    "weight":250.6
+}

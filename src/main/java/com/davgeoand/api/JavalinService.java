@@ -2,7 +2,7 @@ package com.davgeoand.api;
 
 import com.davgeoand.api.controller.AdminController;
 import com.davgeoand.api.controller.GroceryController;
-import com.davgeoand.api.controller.WeightController;
+import com.davgeoand.api.controller.HealthController;
 import com.davgeoand.api.exception.GroceryException;
 import com.surrealdb.SurrealException;
 import io.javalin.Javalin;
@@ -44,7 +44,7 @@ public class JavalinService {
         return () -> {
             path("admin", AdminController.getAdminEndpoints());
             path("grocery", GroceryController.getGroceryEndpoints());
-            path("weight", WeightController.getWeightEndpoints());
+            path("health", HealthController.getHealthEndpoints());
         };
     }
 

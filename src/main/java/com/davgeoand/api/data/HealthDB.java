@@ -1,7 +1,7 @@
 package com.davgeoand.api.data;
 
 import com.davgeoand.api.Constants;
-import com.davgeoand.api.model.weight.WeightRecord;
+import com.davgeoand.api.model.health.WeightRecord;
 import com.surrealdb.Surreal;
 import com.surrealdb.signin.Root;
 import io.opentelemetry.api.trace.SpanKind;
@@ -11,17 +11,17 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Iterator;
 
 @Slf4j
-public class WeightDB {
+public class HealthDB {
     private final Surreal driver;
 
-    public WeightDB() {
-        log.info("Initializing weight db");
+    public HealthDB() {
+        log.info("Initializing health db");
         driver = new Surreal();
         driver.connect(Constants.SURREALDB_CONNECT)
                 .useNs(Constants.SURREALDB_NAMESPACE)
-                .useDb("weight")
+                .useDb("health")
                 .signin(new Root(Constants.SURREALDB_USERNAME, Constants.SURREALDB_PASSWORD));
-        log.info("Initialized weight db");
+        log.info("Initialized health db");
     }
 
     @WithSpan(kind = SpanKind.CLIENT)

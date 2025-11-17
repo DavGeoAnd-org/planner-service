@@ -1,7 +1,8 @@
 package com.davgeoand.api.service;
 
-import com.davgeoand.api.data.WeightDB;
-import com.davgeoand.api.model.weight.WeightRecord;
+import com.davgeoand.api.data.HealthDB;
+import com.davgeoand.api.model.health.WeightRecord;
+
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,12 +12,13 @@ import java.util.List;
 
 @Slf4j
 @NoArgsConstructor
-public class WeightService {
-    private final WeightDB weightDB = new WeightDB();
+public class HealthService {
+    private final HealthDB weightDB = new HealthDB();
 
     public List<WeightRecord> allWeightRecords() {
         List<WeightRecord> weightRecordList = new ArrayList<>();
         weightDB.allWeightRecords().forEachRemaining(weightRecordList::add);
+        log.debug("weightRecordList - {}", weightRecordList);
         return weightRecordList;
     }
 

@@ -1,4 +1,4 @@
-package com.davgeoand.api.model.weight;
+package com.davgeoand.api.model.health;
 
 import com.davgeoand.api.model.serializer.RecordIdDeserializer;
 import com.davgeoand.api.model.serializer.RecordIdSerializer;

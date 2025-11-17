@@ -40,17 +40,6 @@ services:
       - surreal-data:/data
       - surreal-data:/logs
     entrypoint: /surreal start --user root --pass root rocksdb:/data/mydatabase.db
-  surrealist:
-    image: surrealdb/surrealist:latest
-    container_name: planner-service-surrealist
-    hostname: planner-service-local
-    ports:
-      - "8001:8080"
-    networks:
-      - planner-service-bridge-network
-    depends_on:
-      surrealdb:
-        condition: service_started
 
 networks:
   planner-service-bridge-network:

@@ -2,8 +2,15 @@ package com.davgeoand.api.service;
 
 import com.davgeoand.api.data.GroceryDB;
 import com.davgeoand.api.exception.GroceryException;
-import com.davgeoand.api.model.grocery.*;
-import com.surrealdb.RecordId;
+import com.davgeoand.api.model.grocery.category.Category;
+import com.davgeoand.api.model.grocery.item.Item;
+import com.davgeoand.api.model.grocery.item.ItemFullDetail;
+import com.davgeoand.api.model.grocery.item.ProductOf;
+import com.davgeoand.api.model.grocery.item.SoldAt;
+import com.davgeoand.api.model.grocery.store.Store;
+import com.davgeoand.api.model.grocery.store.StoreList;
+import com.davgeoand.api.model.grocery.store.StoreWithLocation;
+
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,36 +22,11 @@ import java.util.List;
 public class GroceryService {
     private final GroceryDB groceryDB = new GroceryDB();
 
-    public List<Item> allItems() {
-        List<Item> itemList = new ArrayList<>();
-        groceryDB.allItems().forEachRemaining(itemList::add);
-        return itemList;
-    }
-
-    public List<Category> allCategories() {
-        List<Category> categoryList = new ArrayList<>();
-        groceryDB.allCategories().forEachRemaining(categoryList::add);
-        return categoryList;
-    }
-
     public List<Store> allStores() {
         List<Store> storeList = new ArrayList<>();
         groceryDB.allStores().forEachRemaining(storeList::add);
+        log.debug("storeList - {}", storeList);
         return storeList;
-    }
-
-    public Item createItem(Item item) {
-        log.debug("item - {}", item);
-        Item createdItem = groceryDB.createItem(item);
-        log.debug("createdItem - {}", createdItem);
-        return createdItem;
-    }
-
-    public Category createCategory(Category category) {
-        log.debug("category - {}", category);
-        Category createdCategory = groceryDB.createCategory(category);
-        log.debug("createdCategory - {}", createdCategory);
-        return createdCategory;
     }
 
     public Store createStore(Store store) {
@@ -54,9 +36,41 @@ public class GroceryService {
         return createdStore;
     }
 
-    public Item item(String id) {
-        log.debug("id - {}", id);
-        return groceryDB.item(id).orElseThrow(() -> new GroceryException.MissingItemException(id));
+    public List<Category> allCategories() {
+        List<Category> categoryList = new ArrayList<>();
+        groceryDB.allCategories().forEachRemaining(categoryList::add);
+        log.debug("categoryList - {}", categoryList);
+        return categoryList;
+    }
+
+    public Category createCategory(Category category) {
+        log.debug("category - {}", category);
+        Category createdCategory = groceryDB.createCategory(category);
+        log.debug("createdCategory - {}", createdCategory);
+        return createdCategory;
+    }
+
+    public List<Item> allItems() {
+        List<Item> itemList = new ArrayList<>();
+        groceryDB.allItems().forEachRemaining(itemList::add);
+        log.debug("itemList - {}", itemList);
+        return itemList;
+    }
+
+    public Item createItem(ItemFullDetail itemFullDetail) {
+        log.debug("itemFullDetail - {}", itemFullDetail);
+        Item createdItem = groceryDB.createItem(itemFullDetail.getItem());
+        log.debug("createdItem - {}", createdItem);
+        Category category = category(itemFullDetail.getCategory().getName());
+        log.debug("category - {}", category);
+        ProductOf createProductOf = groceryDB.createProductOf(createdItem.getId(), category.getId());
+        log.debug("createProductOf - {}", createProductOf);
+        for (StoreWithLocation storeWithLocation : itemFullDetail.getStores()) {
+            SoldAt createSoldAt = groceryDB.createSoldAt(createdItem.getId(),
+                    store(storeWithLocation.getStore().getName()).getId(), new SoldAt(storeWithLocation.getLocation()));
+            log.debug("createSoldAt - {}", createSoldAt);
+        }
+        return createdItem;
     }
 
     public Category category(String id) {
@@ -69,83 +83,31 @@ public class GroceryService {
         return groceryDB.store(id).orElseThrow(() -> new GroceryException.MissingStoreException(id));
     }
 
-    public List<Category> allCategoriesForItem(String id) {
+    public List<StoreList> addCategoryToLists(String categoryId) {
+        log.debug("categoryId - {}", categoryId);
+        Category category = category(categoryId);
+        log.debug("category - {}", category);
+        List<StoreList> storeListList = new ArrayList<>();
+        groceryDB.addCategoryToLists(category.getId()).forEachRemaining(storeListList::add);
+        log.debug("storeListList - {}", storeListList);
+        return storeListList;
+    }
+
+    public List<Category> storeList(String id) {
         log.debug("id - {}", id);
-        Item item = item(id);
         List<Category> categoryList = new ArrayList<>();
-        groceryDB.allCategoriesForItem(item.getId()).forEachRemaining(categoryList::add);
+        groceryDB.storeList(store(id).getId()).forEachRemaining(categoryList::add);
+        log.debug("categoryList - {}", categoryList);
         return categoryList;
     }
 
-    public ProductOf createProductOf(String itemId, String categoryId) {
-        log.debug("itemId - {}", itemId);
+    public List<StoreList> removeCategoryToLists(String categoryId) {
         log.debug("categoryId - {}", categoryId);
-        Item item = item(itemId);
         Category category = category(categoryId);
-        ProductOf createdProductOf = groceryDB.createProductOf(item.getId(), category.getId());
-        log.debug("createdProductOf - {}", createdProductOf);
-        return createdProductOf;
-    }
-
-    public List<Item> allItemsForCategory(String id) {
-        log.debug("id - {}", id);
-        Category category = category(id);
-        List<Item> itemList = new ArrayList<>();
-        groceryDB.allItemsForCategory(category.getId()).forEachRemaining(itemList::add);
-        return itemList;
-    }
-
-    public List<Store> allStoresForItem(String id) {
-        log.debug("id - {}", id);
-        Item item = item(id);
-        List<Store> storeList = new ArrayList<>();
-        groceryDB.allStoresForItem(item.getId()).forEachRemaining(storeList::add);
-        return storeList;
-    }
-
-    public SoldAt createSoldAt(String itemId, String storeId, SoldAt soldAt) {
-        log.debug("itemId - {}", itemId);
-        log.debug("storeId - {}", storeId);
-        log.debug("soldAt - {}", soldAt);
-        Item item = item(itemId);
-        Store store = store(storeId);
-        SoldAt createdSoldAt = groceryDB.createSoldAt(item.getId(), store.getId(), soldAt);
-        log.debug("createdSoldAt - {}", createdSoldAt);
-        return createdSoldAt;
-    }
-
-    public List<Item> allItemsForStore(String id) {
-        log.debug("id - {}", id);
-        Store store = store(id);
-        List<Item> itemList = new ArrayList<>();
-        groceryDB.allItemsForStore(store.getId()).forEachRemaining(itemList::add);
-        return itemList;
-    }
-
-    public List<StoreWithLocation> allStoresForItemWithLocation(String id) {
-        log.debug("id - {}", id);
-        Item item = item(id);
-        List<StoreWithLocation> storeWithLocationList = new ArrayList<>();
-        groceryDB.allStoresForItemWithLocation(item.getId()).forEachRemaining(storeWithLocationList::add);
-        return storeWithLocationList;
-    }
-
-    public void updateList(String id, ListUpdate listUpdate) {
-        log.debug("id - {}", id);
-        log.debug("listUpdate - {}", listUpdate);
-        Store store = store(id);
-        List<RecordId> addRecordIdList = new ArrayList<>();
-        listUpdate.getAdd().forEach(add -> addRecordIdList.add(item(add).getId()));
-        List<RecordId> removeRecordIdList = new ArrayList<>();
-        listUpdate.getRemove().forEach(remove -> removeRecordIdList.add(item(remove).getId()));
-        groceryDB.updateList(store, addRecordIdList, removeRecordIdList);
-    }
-
-    public List<Item> storeList(String id) {
-        log.debug("id - {}", id);
-        Store store = store(id);
-        List<Item> itemList = new ArrayList<>();
-        groceryDB.storeList(store.getId()).forEachRemaining(itemList::add);
-        return itemList;
+        log.debug("category - {}", category);
+        List<StoreList> storeListList = new ArrayList<>();
+        groceryDB.removeCategoryToLists(category.getId()).forEachRemaining(storeListList::add);
+        log.debug("storeListList - {}", storeListList);
+        return storeListList;
     }
 }

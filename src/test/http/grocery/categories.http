@@ -1,0 +1,31 @@
+GET http://localhost:8080/planner/grocery/categories
+###
+
+POST http://localhost:8080/planner/grocery/categories
+
+{
+    "name":"Milk"
+}
+###
+
+POST http://localhost:8080/planner/grocery/categories
+
+{
+    "name":"Bacon"
+}
+###
+
+GET http://localhost:8080/planner/grocery/categories/Milk
+###
+
+GET http://localhost:8080/planner/grocery/categories/Milk/items
+###
+
+GET http://localhost:8080/planner/grocery/categories/Milk/stores
+###
+
+POST http://localhost:8080/planner/grocery/categories/Hot Sauce/stores/list
+###
+
+DELETE http://localhost:8080/planner/grocery/categories/Cotton Swabs/stores/list
+###

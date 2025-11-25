@@ -1,4 +1,4 @@
-package com.davgeoand.api.model.grocery;
+package com.davgeoand.api.model.grocery.store;
 
 import lombok.*;
 

@@ -1,0 +1,69 @@
+GET http://localhost:8080/planner/grocery/items
+###
+
+POST http://localhost:8080/planner/grocery/items
+
+{
+    "name":"Fairlife Milk, 2% Reduced Fat"
+}
+###
+
+POST http://localhost:8080/planner/grocery/items
+
+{
+    "name":"HORMEL BLACK LABEL Black Label Bacon, Original, Microwave Ready"
+}
+###
+
+GET http://localhost:8080/planner/grocery/items/Fairlife Milk, 2% Reduced Fat
+###
+
+POST http://localhost:8080/planner/grocery/items/Fairlife Milk, 2% Reduced Fat/category/Milk
+###
+
+POST http://localhost:8080/planner/grocery/items/HORMEL BLACK LABEL Black Label Bacon, Original, Microwave Ready/category/Bacon
+###
+
+GET http://localhost:8080/planner/grocery/items/Fairlife Milk, 2% Reduced Fat/categories
+###
+
+POST http://localhost:8080/planner/grocery/items/Fairlife Milk, 2% Reduced Fat/store/Publix (Capitol View)
+
+{
+    "location":"Rear Left - Milk"
+}
+###
+
+POST http://localhost:8080/planner/grocery/items/Fairlife Milk, 2% Reduced Fat/store/Kroger (Monroe)
+
+{
+    "location":"DAIRY"
+}
+###
+
+POST http://localhost:8080/planner/grocery/items/HORMEL BLACK LABEL Black Label Bacon, Original, Microwave Ready/store/Publix (Capitol View)
+
+{
+    "location":"Meat"
+}
+###
+
+GET http://localhost:8080/planner/grocery/items/Fairlife Milk, 2% Reduced Fat/stores
+###
+
+POST http://localhost:8080/planner/grocery/items
+
+{
+    "name":"Fairlife Milk, Whole"
+}
+###
+
+POST http://localhost:8080/planner/grocery/items/Fairlife Milk, Whole/category/Milk
+###
+
+POST http://localhost:8080/planner/grocery/items/Fairlife Milk, Whole/store/Publix (Capitol View)
+
+{
+    "location":"Rear Left - Milk"
+}
+###

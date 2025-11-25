@@ -1,7 +1,12 @@
 package com.davgeoand.api.data;
 
 import com.davgeoand.api.Constants;
-import com.davgeoand.api.model.grocery.*;
+import com.davgeoand.api.model.grocery.category.Category;
+import com.davgeoand.api.model.grocery.item.Item;
+import com.davgeoand.api.model.grocery.item.ProductOf;
+import com.davgeoand.api.model.grocery.item.SoldAt;
+import com.davgeoand.api.model.grocery.store.Store;
+import com.davgeoand.api.model.grocery.store.StoreList;
 import com.surrealdb.Array;
 import com.surrealdb.RecordId;
 import com.surrealdb.Response;
@@ -12,7 +17,6 @@ import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -31,30 +35,8 @@ public class GroceryDB {
     }
 
     @WithSpan(kind = SpanKind.CLIENT)
-    public Iterator<Item> allItems() {
-        return driver.select(Item.class, "items");
-    }
-
-    @WithSpan(kind = SpanKind.CLIENT)
-    public Iterator<Category> allCategories() {
-        return driver.select(Category.class, "categories");
-    }
-
-    @WithSpan(kind = SpanKind.CLIENT)
     public Iterator<Store> allStores() {
         return driver.select(Store.class, "stores");
-    }
-
-    @WithSpan(kind = SpanKind.CLIENT)
-    public Item createItem(Item item) {
-        log.debug("item - {}", item);
-        return driver.create(Item.class, new RecordId("items", item.getName()), item);
-    }
-
-    @WithSpan(kind = SpanKind.CLIENT)
-    public Category createCategory(Category category) {
-        log.debug("category - {}", category);
-        return driver.create(Category.class, new RecordId("categories", category.getName()), category);
     }
 
     @WithSpan(kind = SpanKind.CLIENT)
@@ -64,9 +46,25 @@ public class GroceryDB {
     }
 
     @WithSpan(kind = SpanKind.CLIENT)
-    public Optional<Item> item(String id) {
-        log.debug("id - {}", id);
-        return driver.select(Item.class, new RecordId("items", id));
+    public Iterator<Category> allCategories() {
+        return driver.select(Category.class, "categories");
+    }
+
+    @WithSpan(kind = SpanKind.CLIENT)
+    public Category createCategory(Category category) {
+        log.debug("category - {}", category);
+        return driver.create(Category.class, new RecordId("categories", category.getName()), category);
+    }
+
+    @WithSpan(kind = SpanKind.CLIENT)
+    public Iterator<Item> allItems() {
+        return driver.select(Item.class, "items");
+    }
+
+    @WithSpan(kind = SpanKind.CLIENT)
+    public Item createItem(Item item) {
+        log.debug("item - {}", item);
+        return driver.create(Item.class, new RecordId("items", item.getName()), item);
     }
 
     @WithSpan(kind = SpanKind.CLIENT)
@@ -76,46 +74,10 @@ public class GroceryDB {
     }
 
     @WithSpan(kind = SpanKind.CLIENT)
-    public Optional<Store> store(String id) {
-        log.debug("id - {}", id);
-        return driver.select(Store.class, new RecordId("stores", id));
-    }
-
-    @WithSpan(kind = SpanKind.CLIENT)
-    public Iterator<Category> allCategoriesForItem(RecordId id) {
-        log.debug("id - {}", id);
-        Response response = driver.queryBind("RETURN $id->product_of.out[*];",
-                Map.of("id", id));
-        Array results = response.take(0).getArray();
-        log.debug("results - {}", results);
-        return results.iterator(Category.class);
-    }
-
-    @WithSpan(kind = SpanKind.CLIENT)
     public ProductOf createProductOf(RecordId itemId, RecordId categoryId) {
         log.debug("itemId - {}", itemId);
         log.debug("categoryId - {}", categoryId);
         return driver.relate(itemId, "product_of", categoryId).get(ProductOf.class);
-    }
-
-    @WithSpan(kind = SpanKind.CLIENT)
-    public Iterator<Item> allItemsForCategory(RecordId id) {
-        log.debug("id - {}", id);
-        Response response = driver.queryBind("RETURN $id<-product_of.in[*];",
-                Map.of("id", id));
-        Array results = response.take(0).getArray();
-        log.debug("results - {}", results);
-        return results.iterator(Item.class);
-    }
-
-    @WithSpan(kind = SpanKind.CLIENT)
-    public Iterator<Store> allStoresForItem(RecordId id) {
-        log.debug("id - {}", id);
-        Response response = driver.queryBind("RETURN $id->sold_at.out[*];",
-                Map.of("id", id));
-        Array results = response.take(0).getArray();
-        log.debug("results - {}", results);
-        return results.iterator(Store.class);
     }
 
     @WithSpan(kind = SpanKind.CLIENT)
@@ -127,46 +89,40 @@ public class GroceryDB {
     }
 
     @WithSpan(kind = SpanKind.CLIENT)
-    public Iterator<Item> allItemsForStore(RecordId id) {
+    public Optional<Store> store(String id) {
         log.debug("id - {}", id);
-        Response response = driver.queryBind("RETURN $id<-sold_at.in[*];",
-                Map.of("id", id));
-        Array results = response.take(0).getArray();
-        log.debug("results - {}", results);
-        return results.iterator(Item.class);
+        return driver.select(Store.class, new RecordId("stores", id));
     }
 
     @WithSpan(kind = SpanKind.CLIENT)
-    public Iterator<StoreWithLocation> allStoresForItemWithLocation(RecordId id) {
+    public Iterator<StoreList> addCategoryToLists(RecordId id) {
         log.debug("id - {}", id);
-        Response response = driver.queryBind("""
-                        RETURN $id->sold_at.map(|$val: any| { {
-                        location: $val.location,
-                        store: $val.out[*]
-                        } });""",
+        Response response = driver.queryBind(
+                "RELATE (SELECT id FROM stores WHERE array::group(<-sold_at.in->product_of.out) CONTAINS $id) -> store_list -> $id;",
                 Map.of("id", id));
         Array results = response.take(0).getArray();
         log.debug("results - {}", results);
-        return results.iterator(StoreWithLocation.class);
+        return results.iterator(StoreList.class);
     }
 
     @WithSpan(kind = SpanKind.CLIENT)
-    public void updateList(Store store, List<RecordId> addRecordIdList, List<RecordId> removeRecordIdList) {
-        log.debug("store - {}", store);
-        log.debug("addRecordIdList - {}", addRecordIdList);
-        log.debug("removeRecordIdList - {}", removeRecordIdList);
-        addRecordIdList.forEach(addRecordId -> driver.relate(store.getId(), "list_item", addRecordId));
-        removeRecordIdList.forEach(removeRecordId -> driver.queryBind("DELETE list_item WHERE in = $storeId AND out = $removeId;",
-                Map.of("storeId", store.getId(), "removeId", removeRecordId)));
-    }
-
-    @WithSpan(kind = SpanKind.CLIENT)
-    public Iterator<Item> storeList(RecordId id) {
+    public Iterator<Category> storeList(RecordId id) {
         log.debug("id - {}", id);
-        Response response = driver.queryBind("RETURN $id->list_item.out[*];",
+        Response response = driver.queryBind("RETURN array::group($id->store_list.out[*]);",
                 Map.of("id", id));
         Array results = response.take(0).getArray();
         log.debug("results - {}", results);
-        return results.iterator(Item.class);
+        return results.iterator(Category.class);
+    }
+
+    @WithSpan(kind = SpanKind.CLIENT)
+    public Iterator<StoreList> removeCategoryToLists(RecordId id) {
+        log.debug("id - {}", id);
+        Response response = driver.queryBind(
+                "DELETE store_list WHERE out = $id RETURN BEFORE;",
+                Map.of("id", id));
+        Array results = response.take(0).getArray();
+        log.debug("results - {}", results);
+        return results.iterator(StoreList.class);
     }
 }

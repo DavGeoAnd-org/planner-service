@@ -1,0 +1,35 @@
+GET http://localhost:8080/planner/grocery/stores
+###
+
+POST http://localhost:8080/planner/grocery/stores
+
+{
+    "name":"Publix (Capitol View)"
+}
+###
+
+POST http://localhost:8080/planner/grocery/stores
+
+{
+    "name":"Kroger (Monroe)"
+}
+###
+
+GET http://localhost:8080/planner/grocery/stores/Publix (Capitol View)
+###
+
+GET http://localhost:8080/planner/grocery/stores/Publix (Capitol View)/items
+###
+
+GET http://localhost:8080/planner/grocery/stores/Publix (Capitol View)/categories
+###
+
+GET http://localhost:8080/planner/grocery/stores/Publix (Capitol View)/list
+###
+
+PUT http://localhost:8080/planner/grocery/stores/Publix (Capitol View)/list
+
+{
+    "remove":["HORMEL BLACK LABEL Black Label Bacon, Original, Microwave Ready"]
+}
+###

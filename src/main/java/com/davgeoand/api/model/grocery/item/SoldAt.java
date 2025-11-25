@@ -1,4 +1,4 @@
-package com.davgeoand.api.model.grocery;
+package com.davgeoand.api.model.grocery.item;
 
 import com.davgeoand.api.model.serializer.RecordIdDeserializer;
 import com.davgeoand.api.model.serializer.RecordIdSerializer;
@@ -12,9 +12,13 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Item {
+public class SoldAt {
     @JsonSerialize(using = RecordIdSerializer.class)
     @JsonDeserialize(using = RecordIdDeserializer.class)
-    public RecordId id;
-    public String name;
+    public RecordId id, in, out;
+    public String location;
+
+    public SoldAt(String location) {
+        this.location = location;
+    }
 }

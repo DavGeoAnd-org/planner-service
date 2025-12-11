@@ -1,6 +1,7 @@
 package com.davgeoand.api.data;
 
-import com.davgeoand.api.Constants;
+import com.davgeoand.api.ServiceProperties;
+import com.davgeoand.api.exception.JavalinServiceException.MissingPropertyException;
 import com.davgeoand.api.model.grocery.category.Category;
 import com.davgeoand.api.model.grocery.item.Item;
 import com.davgeoand.api.model.grocery.item.ProductOf;
@@ -23,15 +24,26 @@ import java.util.Optional;
 @Slf4j
 public class GroceryDB {
     private final Surreal driver;
+    private final String SURREALDB_CONNECT = ServiceProperties.getProperty("surrealdb.connect").orElseThrow(() -> new MissingPropertyException("surrealdb.connect"));
+    private final String SURREALDB_NAMESPACE = ServiceProperties.getProperty("surrealdb.namespace").orElseThrow(() -> new MissingPropertyException("surrealdb.namespace"));
+    private final String SURREALDB_USERNAME = ServiceProperties.getProperty("surrealdb.username").orElseThrow(() -> new MissingPropertyException("surrealdb.username"));
+    private final String SURREALDB_PASSWORD = ServiceProperties.getProperty("surrealdb.password").orElseThrow(() -> new MissingPropertyException("surrealdb.password"));
 
     public GroceryDB() {
         log.info("Initializing grocery db");
         driver = new Surreal();
-        driver.connect(Constants.SURREALDB_CONNECT)
-                .useNs(Constants.SURREALDB_NAMESPACE)
-                .useDb("grocery")
-                .signin(new Root(Constants.SURREALDB_USERNAME, Constants.SURREALDB_PASSWORD));
+        connect();
         log.info("Initialized grocery db");
+    }
+
+    @WithSpan(kind = SpanKind.CLIENT)
+    private void connect() {
+        log.info("Connecting to grocery db");
+        driver.connect(SURREALDB_CONNECT)
+                .useNs(SURREALDB_NAMESPACE)
+                .useDb("grocery")
+                .signin(new Root(SURREALDB_USERNAME, SURREALDB_PASSWORD));
+        log.info("Connected to grocery db");
     }
 
     @WithSpan(kind = SpanKind.CLIENT)

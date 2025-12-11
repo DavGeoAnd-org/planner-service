@@ -1,6 +1,7 @@
 package com.davgeoand.api;
 
 import io.opentelemetry.common.ComponentLoader;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.opentelemetry.instrumentation.resources.ManifestResourceProvider;
 import io.opentelemetry.sdk.autoconfigure.spi.ConfigProperties;
 import io.opentelemetry.sdk.autoconfigure.spi.ResourceProvider;
@@ -9,6 +10,7 @@ import io.opentelemetry.sdk.resources.Resource;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -18,7 +20,21 @@ import java.util.*;
 public class ServiceProperties {
     private static final Properties properties = new Properties();
 
-    public static void init(boolean setOtlp, String... files) {
+    static {
+        //Service
+        properties.put("service.name", "planner-service");
+        properties.put("service.port", StringUtils.defaultIfBlank(System.getenv("SERVICE_PORT"), "8080"));
+        properties.put("service.context.path", StringUtils.defaultIfBlank(System.getenv("SERVICE_CONTEXT_PATH"), "/planner"));
+
+        // SurrealDB
+        properties.put("surrealdb.connect", StringUtils.defaultIfBlank(System.getenv("SURREALDB_CONNECT"), "http://localhost:8000"));
+        properties.put("surrealdb.namespace", StringUtils.defaultIfBlank(System.getenv("SURREALDB_NAMESPACE"), "planner"));
+        properties.put("surrealdb.username", StringUtils.defaultIfBlank(System.getenv("SURREALDB_USERNAME"), "root"));
+        properties.put("surrealdb.password", StringUtils.defaultIfBlank(System.getenv("SURREALDB_PASSWORD"), "root"));
+    }
+
+    @WithSpan
+    public static void setExternalProperties(boolean setOtlp, String... files) {
         log.info("Initializing service properties");
         log.debug("files - {}", Arrays.toString(files));
 
@@ -38,6 +54,7 @@ public class ServiceProperties {
         log.info("Initialized service properties");
     }
 
+    @WithSpan
     private static void setOtlpProperties() {
         log.info("Setting opentelemetry properties");
 

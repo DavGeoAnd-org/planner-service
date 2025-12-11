@@ -3,12 +3,12 @@
 ## Create repo in Github
 
 * Create service from this template
+* Find all instances of planner-service and update it to the repo name
 
 ## Create project local
 
 * Clone repo locally
-* Find all instances of planner-service and update it to the repo name
-* Change service.context_path in service.properties
+* Change service.context.path property in ServiceProperties.java
 * Change service.namespace in otel.env files
 * Update version in pom.xml
 * Add the following env variables to the run configuration

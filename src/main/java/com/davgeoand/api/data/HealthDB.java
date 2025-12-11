@@ -1,6 +1,7 @@
 package com.davgeoand.api.data;
 
-import com.davgeoand.api.Constants;
+import com.davgeoand.api.ServiceProperties;
+import com.davgeoand.api.exception.JavalinServiceException;
 import com.davgeoand.api.model.health.WeightRecord;
 import com.surrealdb.Surreal;
 import com.surrealdb.signin.Root;
@@ -13,15 +14,26 @@ import java.util.Iterator;
 @Slf4j
 public class HealthDB {
     private final Surreal driver;
+    private final String SURREALDB_CONNECT = ServiceProperties.getProperty("surrealdb.connect").orElseThrow(() -> new JavalinServiceException.MissingPropertyException("surrealdb.connect"));
+    private final String SURREALDB_NAMESPACE = ServiceProperties.getProperty("surrealdb.namespace").orElseThrow(() -> new JavalinServiceException.MissingPropertyException("surrealdb.namespace"));
+    private final String SURREALDB_USERNAME = ServiceProperties.getProperty("surrealdb.username").orElseThrow(() -> new JavalinServiceException.MissingPropertyException("surrealdb.username"));
+    private final String SURREALDB_PASSWORD = ServiceProperties.getProperty("surrealdb.password").orElseThrow(() -> new JavalinServiceException.MissingPropertyException("surrealdb.password"));
 
     public HealthDB() {
         log.info("Initializing health db");
         driver = new Surreal();
-        driver.connect(Constants.SURREALDB_CONNECT)
-                .useNs(Constants.SURREALDB_NAMESPACE)
-                .useDb("health")
-                .signin(new Root(Constants.SURREALDB_USERNAME, Constants.SURREALDB_PASSWORD));
+        connect();
         log.info("Initialized health db");
+    }
+
+    @WithSpan(kind = SpanKind.CLIENT)
+    private void connect() {
+        log.info("Connecting to health db");
+        driver.connect(SURREALDB_CONNECT)
+                .useNs(SURREALDB_NAMESPACE)
+                .useDb("health")
+                .signin(new Root(SURREALDB_USERNAME, SURREALDB_PASSWORD));
+        log.info("Connected to health db");
     }
 
     @WithSpan(kind = SpanKind.CLIENT)

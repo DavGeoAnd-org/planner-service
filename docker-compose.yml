@@ -9,41 +9,9 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - planner-service-bridge-network
-    depends_on:
-      surrealdb:
-        condition: service_started
-      otel-collector-service:
-        condition: service_started
-  otel-collector-service:
-    image: davgeoand9/otel-collector-service:latest
-    container_name: planner-service-otel-collector-service
-    hostname: planner-service-local
-    ports:
-      - "4317:4317"
-      - "4318:4318"
-      - "13133:13133"
-      - "55678:55678"
-      - "55679:55679"
-    networks:
-      - planner-service-bridge-network
-  surrealdb:
-    image: surrealdb/surrealdb:latest
-    container_name: planner-service-surrealdb
-    hostname: planner-service-local
-    user: root
-    ports:
-      - "8000:8000"
-    networks:
-      - planner-service-bridge-network
-    volumes:
-      - surreal-data:/data
-      - surreal-data:/logs
-    entrypoint: /surreal start --user root --pass root rocksdb:/data/mydatabase.db
+      - develop-network
 
 networks:
-  planner-service-bridge-network:
-    name: planner-service-bridge
-
-volumes:
-  surreal-data:
+  develop-network:
+    external: true
+    name: develop

@@ -1,17 +1,23 @@
 package com.davgeoand.api;
 
-import io.opentelemetry.api.trace.SpanKind;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.context.Scope;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 @Slf4j
 public class ServiceRunner {
-    @WithSpan(kind = SpanKind.INTERNAL, value = "Service Start")
     public static void main(String[] args) {
-        ServiceProperties.init(
-                Boolean.parseBoolean(StringUtils.defaultIfBlank(System.getenv("SET_OTLP"), "false")),
-                "build.properties");
-        new JavalinService().start();
+        JavalinService javalinService;
+        Span span = GlobalOpenTelemetry.getTracer("JavalinService").spanBuilder("ServiceRunner.main").startSpan();
+        try (Scope ignored = span.makeCurrent()) {
+            ServiceProperties.setExternalProperties(
+                    Boolean.parseBoolean(StringUtils.defaultIfBlank(System.getenv("SET_OTLP"), "false")),
+                    "build.properties");
+            javalinService = new JavalinService();
+        }
+        span.end();
+        javalinService.start();
     }
 }

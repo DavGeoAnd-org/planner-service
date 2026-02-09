@@ -30,7 +30,7 @@ public class HealthController {
         WeightRecord weightRecord = context.bodyAsClass(WeightRecord.class);
         log.debug("weightRecord - {}", weightRecord);
         context.json(
-                new ZonedDateTimeResponse("Added weight", weightService.addWeightRecord(weightRecord).getTimestamp()))
+                        new ZonedDateTimeResponse("Added weight", weightService.addWeightRecord(weightRecord).getTimestamp()))
                 .status(HttpStatus.CREATED);
     }
 

@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+
 import static io.javalin.apibuilder.ApiBuilder.*;
 
 @Slf4j
@@ -50,7 +51,7 @@ public class GroceryController {
         String categoryId = context.pathParam("categoryId");
         log.debug("categoryId - {}", categoryId);
         context.json(groceryService.removeCategoryToLists(categoryId).stream()
-                .map(storeList -> storeList.getIn().getId().getString()).toList())
+                        .map(storeList -> storeList.getIn().getId().getString()).toList())
                 .status(HttpStatus.OK);
     }
 
@@ -67,7 +68,7 @@ public class GroceryController {
         String categoryId = context.pathParam("categoryId");
         log.debug("categoryId - {}", categoryId);
         context.json(groceryService.addCategoryToLists(categoryId).stream()
-                .map(storeList -> storeList.getIn().getId().getString()).toList())
+                        .map(storeList -> storeList.getIn().getId().getString()).toList())
                 .status(HttpStatus.CREATED);
     }
 
@@ -76,8 +77,8 @@ public class GroceryController {
         ItemFullDetail itemFullDetail = context.bodyAsClass(ItemFullDetail.class);
         log.debug("item - {}", itemFullDetail);
         context.json(
-                new RecordIdResponse("Created Item",
-                        groceryService.createItem(itemFullDetail).getId()))
+                        new RecordIdResponse("Created Item",
+                                groceryService.createItem(itemFullDetail).getId()))
                 .status(HttpStatus.CREATED);
     }
 
@@ -92,8 +93,8 @@ public class GroceryController {
         Category category = context.bodyAsClass(Category.class);
         log.debug("category - {}", category);
         context.json(
-                new RecordIdResponse("Created Category",
-                        groceryService.createCategory(category).getId()))
+                        new RecordIdResponse("Created Category",
+                                groceryService.createCategory(category).getId()))
                 .status(HttpStatus.CREATED);
     }
 
@@ -108,8 +109,8 @@ public class GroceryController {
         Store store = context.bodyAsClass(Store.class);
         log.debug("store - {}", store);
         context.json(
-                new RecordIdResponse("Created Store",
-                        groceryService.createStore(store).getId()))
+                        new RecordIdResponse("Created Store",
+                                groceryService.createStore(store).getId()))
                 .status(HttpStatus.CREATED);
     }
 

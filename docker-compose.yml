@@ -2,7 +2,7 @@ services:
   planner-service:
     image: local/planner-service:latest
     container_name: planner-service
-    hostname: planner-service-local
+    hostname: docker-local
     env_file:
       - env_files/local/service.env
       - env_files/local/otel.env

@@ -1,0 +1,20 @@
+package com.davgeoand.api.model.workout;
+
+import com.davgeoand.api.model.serializer.RecordIdDeserializer;
+import com.davgeoand.api.model.serializer.RecordIdSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.surrealdb.RecordId;
+import lombok.*;
+
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+public class WorkoutStep {
+    @JsonSerialize(using = RecordIdSerializer.class)
+    @JsonDeserialize(using = RecordIdDeserializer.class)
+    RecordId id, in, out;
+    int order, note;
+}

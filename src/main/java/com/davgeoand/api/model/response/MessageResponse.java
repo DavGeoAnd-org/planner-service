@@ -1,4 +1,3 @@
-
 package com.davgeoand.api.model.response;
 
 import lombok.*;

@@ -10,7 +10,6 @@ import com.davgeoand.api.model.grocery.item.SoldAt;
 import com.davgeoand.api.model.grocery.store.Store;
 import com.davgeoand.api.model.grocery.store.StoreList;
 import com.davgeoand.api.model.grocery.store.StoreWithLocation;
-
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

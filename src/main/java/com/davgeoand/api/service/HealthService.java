@@ -2,7 +2,6 @@ package com.davgeoand.api.service;
 
 import com.davgeoand.api.data.HealthDB;
 import com.davgeoand.api.model.health.WeightRecord;
-
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

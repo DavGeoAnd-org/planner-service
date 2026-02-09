@@ -18,7 +18,16 @@ public class AdminController {
     private final static AdminService adminService = new AdminService();
 
     public static @NotNull EndpointGroup getAdminEndpoints() {
-        return () -> get("health", AdminController::health);
+        return () -> {
+            get("health", AdminController::health);
+            get("metrics", AdminController::metrics);
+        };
+    }
+
+    private static void metrics(@NotNull Context context) {
+        log.debug("request - metrics");
+        context.json(adminService.metrics())
+                .status(HttpStatus.OK);
     }
 
     private static void health(@NotNull Context context) {

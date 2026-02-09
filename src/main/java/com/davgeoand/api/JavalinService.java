@@ -3,12 +3,15 @@ package com.davgeoand.api;
 import com.davgeoand.api.controller.AdminController;
 import com.davgeoand.api.controller.GroceryController;
 import com.davgeoand.api.controller.HealthController;
+import com.davgeoand.api.controller.WorkoutController;
 import com.davgeoand.api.exception.GroceryException;
 import com.davgeoand.api.exception.JavalinServiceException.MissingPropertyException;
+import com.davgeoand.api.exception.WorkoutException;
 import com.surrealdb.SurrealException;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.EndpointGroup;
 import io.javalin.http.HttpStatus;
+import io.javalin.micrometer.MicrometerPlugin;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,9 +29,17 @@ public class JavalinService {
         javalin = Javalin.create(javalinConfig -> {
             javalinConfig.router.apiBuilder(routes());
             javalinConfig.router.contextPath = SERVICE_CONTEXT_PATH;
+            javalinConfig.registerPlugin(micrometerRegistry());
         });
         addExceptionHandlers();
         log.info("Initialized {}", SERVICE_NAME);
+    }
+
+    @WithSpan
+    private MicrometerPlugin micrometerRegistry() {
+        log.info("Adding micrometer registry");
+        return new MicrometerPlugin(
+                micrometerPluginConfig -> micrometerPluginConfig.registry = ServiceMeterRegistry.meterRegistry);
     }
 
     @WithSpan
@@ -42,6 +53,10 @@ public class JavalinService {
             context.result(e.getMessage());
             context.status(HttpStatus.INTERNAL_SERVER_ERROR);
         });
+        javalin.exception(WorkoutException.MissingException.class, (e, context) -> {
+            context.result(e.getMessage());
+            context.status(HttpStatus.NOT_FOUND);
+        });
         log.info("Added exception handlers");
     }
 
@@ -52,6 +67,7 @@ public class JavalinService {
             path("admin", AdminController.getAdminEndpoints());
             path("grocery", GroceryController.getGroceryEndpoints());
             path("health", HealthController.getHealthEndpoints());
+            path("workout", WorkoutController.getWorkoutEndpoints());
         };
     }
 

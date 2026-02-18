@@ -16,5 +16,6 @@ public class WorkoutStep {
     @JsonSerialize(using = RecordIdSerializer.class)
     @JsonDeserialize(using = RecordIdDeserializer.class)
     RecordId id, in, out;
-    int order, note;
+    int order;
+    String note;
 }

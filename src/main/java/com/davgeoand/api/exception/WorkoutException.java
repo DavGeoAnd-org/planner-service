@@ -8,8 +8,15 @@ public class WorkoutException {
     }
 
     public static class MissingExerciseException extends WorkoutException.MissingException {
-        public MissingExerciseException(String categoryId) {
-            super("Exercise does not exist: " + categoryId);
+        public MissingExerciseException(String exerciseId) {
+            super("Exercise does not exist: " + exerciseId);
         }
+    }
+
+    public static class MissingWorkoutException extends WorkoutException.MissingException {
+        public MissingWorkoutException(String workoutId) {
+            super("Workout does not exist: " + workoutId);
+        }
+
     }
 }

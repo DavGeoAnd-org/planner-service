@@ -16,5 +16,5 @@ public class Exercise {
     @JsonSerialize(using = RecordIdSerializer.class)
     @JsonDeserialize(using = RecordIdDeserializer.class)
     RecordId id;
-    String name, primaryMuscle, exerciseType, equipment, mechanics, forceType, experienceLevel, secondaryMuscles, instructions, tips;
+    String name, primaryMuscle, secondaryMuscles, equipment, difficulty, exerciseType, instructions;
 }

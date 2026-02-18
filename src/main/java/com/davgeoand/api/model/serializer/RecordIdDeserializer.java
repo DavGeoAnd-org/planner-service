@@ -2,7 +2,6 @@ package com.davgeoand.api.model.serializer;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.surrealdb.RecordId;
 
@@ -16,8 +15,8 @@ public class RecordIdDeserializer extends StdDeserializer<RecordId> {
 
     @Override
     public RecordId deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        JsonNode node = p.getCodec().readTree(p);
-        return new RecordId(node.get("table").asText(), node.get("id").asText());
+        String id = p.getText();
+        int separatorIndex = id.indexOf(":");
+        return new RecordId(id.substring(0, separatorIndex), id.substring(separatorIndex + 1));
     }
-
 }

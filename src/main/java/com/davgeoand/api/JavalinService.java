@@ -45,13 +45,13 @@ public class JavalinService {
     @WithSpan
     private void addExceptionHandlers() {
         log.info("Adding exception handlers");
-        javalin.exception(GroceryException.MissingException.class, (e, context) -> {
-            context.result(e.getMessage());
-            context.status(HttpStatus.NOT_FOUND);
-        });
         javalin.exception(SurrealException.class, (e, context) -> {
             context.result(e.getMessage());
             context.status(HttpStatus.INTERNAL_SERVER_ERROR);
+        });
+        javalin.exception(GroceryException.MissingException.class, (e, context) -> {
+            context.result(e.getMessage());
+            context.status(HttpStatus.NOT_FOUND);
         });
         javalin.exception(WorkoutException.MissingException.class, (e, context) -> {
             context.result(e.getMessage());

@@ -24,17 +24,37 @@ public class WorkoutController {
             path("exercises", () -> {
                 get(WorkoutController::allExercises);
                 post(WorkoutController::addExercise);
+                put(WorkoutController::updateExercise);
                 path("{id}", () -> {
                 });
             });
             path("workouts", () -> {
                 get(WorkoutController::allWorkouts);
                 post(WorkoutController::addWorkout);
+                put(WorkoutController::updateWorkout);
                 path("{id}", () -> {
                     get(WorkoutController::workoutDetail);
                 });
             });
         };
+    }
+
+    private static void updateWorkout(@NotNull Context context) {
+        log.debug("request - updateExercise");
+        WorkoutDetail workoutDetail = context.bodyAsClass(WorkoutDetail.class);
+        log.debug("workoutDetail - {}", workoutDetail);
+        context.json(new RecordIdResponse("Updated Workout",
+                        workoutService.updateWorkout(workoutDetail).getId()))
+                .status(HttpStatus.OK);
+    }
+
+    private static void updateExercise(@NotNull Context context) {
+        log.debug("request - updateExercise");
+        Exercise exercise = context.bodyAsClass(Exercise.class);
+        log.debug("exercise - {}", exercise);
+        context.json(new RecordIdResponse("Updated Exercise",
+                        workoutService.updateExercise(exercise).getId()))
+                .status(HttpStatus.OK);
     }
 
     private static void workoutDetail(@NotNull Context context) {

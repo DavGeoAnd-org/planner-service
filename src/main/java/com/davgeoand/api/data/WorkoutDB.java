@@ -6,9 +6,7 @@ import com.davgeoand.api.model.workout.Exercise;
 import com.davgeoand.api.model.workout.Workout;
 import com.davgeoand.api.model.workout.WorkoutDetail;
 import com.davgeoand.api.model.workout.WorkoutStep;
-import com.surrealdb.RecordId;
-import com.surrealdb.Response;
-import com.surrealdb.Surreal;
+import com.surrealdb.*;
 import com.surrealdb.signin.Root;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
@@ -27,20 +25,20 @@ public class WorkoutDB {
     private final String SURREALDB_PASSWORD = ServiceProperties.getProperty("surrealdb.password").orElseThrow(() -> new JavalinServiceException.MissingPropertyException("surrealdb.password"));
 
     public WorkoutDB() {
-        log.info("Initializing Workout db");
+        log.info("Initializing workout db");
         driver = new Surreal();
         connect();
-        log.info("Initialized Workout db");
+        log.info("Initialized workout db");
     }
 
     @WithSpan(kind = SpanKind.CLIENT)
     private void connect() {
-        log.info("Connecting to Workout db");
+        log.info("Connecting to workout db");
         driver.connect(SURREALDB_CONNECT)
                 .useNs(SURREALDB_NAMESPACE)
-                .useDb("Workout")
+                .useDb("workout")
                 .signin(new Root(SURREALDB_USERNAME, SURREALDB_PASSWORD));
-        log.info("Connected to Workout db");
+        log.info("Connected to workout db");
     }
 
     @WithSpan(kind = SpanKind.CLIENT)
@@ -95,5 +93,28 @@ public class WorkoutDB {
                         FROM ONLY $id;""",
                 Map.of("id", id));
         return response.take(0).get(WorkoutDetail.class);
+    }
+
+    @WithSpan(kind = SpanKind.CLIENT)
+    public Exercise updateExercise(Exercise exercise) {
+        log.debug("exercise - {}", exercise);
+        return driver.update(Exercise.class, exercise.getId(), UpType.CONTENT, exercise);
+    }
+
+    @WithSpan(kind = SpanKind.CLIENT)
+    public Workout updateWorkout(Workout workout) {
+        log.debug("workout - {}", workout);
+        return driver.update(Workout.class, workout.getId(), UpType.CONTENT, workout);
+    }
+
+    @WithSpan(kind = SpanKind.CLIENT)
+    public void removeWorkoutStepsFromWorkout(RecordId id) {
+        log.debug("id - {}", id);
+        Response response = driver.queryBind(
+                "DELETE workout_steps WHERE in = $id RETURN BEFORE;",
+                Map.of("id", id));
+        Array results = response.take(0).getArray();
+        log.debug("results - {}", results);
+        results.iterator(WorkoutStep.class);
     }
 }

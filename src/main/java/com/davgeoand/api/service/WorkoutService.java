@@ -59,4 +59,22 @@ public class WorkoutService {
         log.debug("id - {}", id);
         return workoutDB.selectWorkout(id).orElseThrow(() -> new WorkoutException.MissingWorkoutException(id));
     }
+
+    public Exercise updateExercise(Exercise exercise) {
+        log.debug("exercise - {}", exercise);
+        return workoutDB.updateExercise(exercise);
+    }
+
+    public Workout updateWorkout(WorkoutDetail workoutDetail) {
+        log.debug("workoutDetail - {}", workoutDetail);
+        Workout workout = workout(workoutDetail.getName());
+        log.debug("workout - {}", workout);
+        Workout updatedWorkout = workoutDB.updateWorkout(workout);
+        workoutDB.removeWorkoutStepsFromWorkout(updatedWorkout.getId());
+        workoutDetail.getSteps().forEach(step -> {
+            log.debug("step - {}", step);
+            workoutDB.insertWorkoutStep(new WorkoutStep(null, updatedWorkout.getId(), step.getExercise().getId(), step.getOrder(), step.getNote()));
+        });
+        return updatedWorkout;
+    }
 }

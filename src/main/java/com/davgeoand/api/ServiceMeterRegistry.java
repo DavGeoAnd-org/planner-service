@@ -20,10 +20,8 @@ public class ServiceMeterRegistry {
                 .filter(registry -> registry.getClass().getName().contains("OpenTelemetryMeterRegistry"))
                 .findAny()
                 .ifPresentOrElse((foundRegistry) -> {
-                    log.debug("Found OpenTelemetryMeterRegistry");
                     meterRegistry = foundRegistry;
                 }, () -> {
-                    log.debug("Using SimpleMeterRegistry");
                     meterRegistry = new SimpleMeterRegistry();
                 });
     }

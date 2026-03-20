@@ -12,7 +12,7 @@ import com.surrealdb.Array;
 import com.surrealdb.RecordId;
 import com.surrealdb.Response;
 import com.surrealdb.Surreal;
-import com.surrealdb.signin.Root;
+import com.surrealdb.signin.RootCredential;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +42,7 @@ public class GroceryDB {
         driver.connect(SURREALDB_CONNECT)
                 .useNs(SURREALDB_NAMESPACE)
                 .useDb("grocery")
-                .signin(new Root(SURREALDB_USERNAME, SURREALDB_PASSWORD));
+                .signin(new RootCredential(SURREALDB_USERNAME, SURREALDB_PASSWORD));
         log.info("Connected to grocery db");
     }
 

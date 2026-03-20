@@ -3,13 +3,17 @@ package com.davgeoand.api.data;
 import com.davgeoand.api.ServiceProperties;
 import com.davgeoand.api.exception.JavalinServiceException;
 import com.davgeoand.api.model.health.WeightRecord;
+import com.surrealdb.Response;
 import com.surrealdb.Surreal;
-import com.surrealdb.signin.Root;
+import com.surrealdb.signin.RootCredential;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Iterator;
+import java.util.Map;
 
 @Slf4j
 public class HealthDB {
@@ -32,7 +36,7 @@ public class HealthDB {
         driver.connect(SURREALDB_CONNECT)
                 .useNs(SURREALDB_NAMESPACE)
                 .useDb("health")
-                .signin(new Root(SURREALDB_USERNAME, SURREALDB_PASSWORD));
+                .signin(new RootCredential(SURREALDB_USERNAME, SURREALDB_PASSWORD));
         log.info("Connected to health db");
     }
 
@@ -44,6 +48,17 @@ public class HealthDB {
     @WithSpan(kind = SpanKind.CLIENT)
     public WeightRecord addWeightRecord(WeightRecord weightRecord) {
         log.debug("weightRecord - {}", weightRecord);
-        return driver.create(WeightRecord.class, "weightRecords", weightRecord).getFirst();
+        return driver.create(weightRecord.getId(), weightRecord).get(WeightRecord.class);
+    }
+
+    @WithSpan(kind = SpanKind.CLIENT)
+    public Iterator<WeightRecord> weightRecordsByDayRange(int days) {
+        log.debug("days - {}", days);
+        Response response = driver.queryBind("""
+                        SELECT *
+                        FROM weightRecords
+                        WHERE record::id(id) > $days;""",
+                Map.of("days", Instant.now().minus(days, ChronoUnit.DAYS).toEpochMilli()));
+        return response.take(0).getArray().iterator(WeightRecord.class);
     }
 }

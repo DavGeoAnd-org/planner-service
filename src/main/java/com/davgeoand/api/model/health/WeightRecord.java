@@ -2,13 +2,12 @@ package com.davgeoand.api.model.health;
 
 import com.davgeoand.api.model.serializer.RecordIdDeserializer;
 import com.davgeoand.api.model.serializer.RecordIdSerializer;
-import com.davgeoand.api.model.serializer.ZonedDateTimeSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.surrealdb.RecordId;
 import lombok.*;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -18,8 +17,6 @@ import java.time.ZonedDateTime;
 public class WeightRecord {
     @JsonSerialize(using = RecordIdSerializer.class)
     @JsonDeserialize(using = RecordIdDeserializer.class)
-    public RecordId id;
-    @JsonSerialize(using = ZonedDateTimeSerializer.class)
-    ZonedDateTime timestamp;
+    RecordId id = new RecordId("weightRecords", Instant.now().toEpochMilli());
     double weight;
 }

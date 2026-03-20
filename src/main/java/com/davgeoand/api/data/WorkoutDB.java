@@ -7,7 +7,7 @@ import com.davgeoand.api.model.workout.Workout;
 import com.davgeoand.api.model.workout.WorkoutDetail;
 import com.davgeoand.api.model.workout.WorkoutStep;
 import com.surrealdb.*;
-import com.surrealdb.signin.Root;
+import com.surrealdb.signin.RootCredential;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ public class WorkoutDB {
         driver.connect(SURREALDB_CONNECT)
                 .useNs(SURREALDB_NAMESPACE)
                 .useDb("workout")
-                .signin(new Root(SURREALDB_USERNAME, SURREALDB_PASSWORD));
+                .signin(new RootCredential(SURREALDB_USERNAME, SURREALDB_PASSWORD));
         log.info("Connected to workout db");
     }
 

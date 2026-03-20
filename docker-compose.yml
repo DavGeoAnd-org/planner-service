@@ -4,10 +4,10 @@ services:
     container_name: planner-service
     hostname: docker-local
     env_file:
-      - env_files/local/service.env
-      - env_files/local/otel.env
+      - env_files/dev/service.env
+      - env_files/dev/otel.env
     ports:
-      - "8080:8080"
+      - "10000:10000"
     networks:
       - develop-network
 

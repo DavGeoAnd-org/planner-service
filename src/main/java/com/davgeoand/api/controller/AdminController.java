@@ -35,4 +35,9 @@ public class AdminController {
         context.json(new MessageResponse(adminService.health()))
                 .status(HttpStatus.OK);
     }
+
+    public static void addServiceInfo() {
+        log.debug("function - addServiceInfo");
+        adminService.addServiceInfo();
+    }
 }

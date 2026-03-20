@@ -23,7 +23,8 @@ public class ServiceProperties {
     static {
         //Service
         properties.put("service.name", "planner-service");
-        properties.put("service.port", StringUtils.defaultIfBlank(System.getenv("SERVICE_PORT"), "8080"));
+        properties.put("deployment.environment", "local");
+        properties.put("service.port", StringUtils.defaultIfBlank(System.getenv("SERVICE_PORT"), "10000"));
         properties.put("service.context.path", StringUtils.defaultIfBlank(System.getenv("SERVICE_CONTEXT_PATH"), "/planner"));
 
         // SurrealDB

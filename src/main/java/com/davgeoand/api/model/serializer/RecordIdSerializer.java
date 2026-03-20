@@ -15,6 +15,10 @@ public class RecordIdSerializer extends StdSerializer<RecordId> {
 
     @Override
     public void serialize(RecordId value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-        gen.writeString(value.getTable() + ":" + value.getId().getString());
+        if (value.getId().isLong()) {
+            gen.writeString(value.getTable() + ":" + value.getId().getLong());
+        } else {
+            gen.writeString(value.getTable() + ":" + value.getId().getString());
+        }
     }
 }

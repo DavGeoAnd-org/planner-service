@@ -10,6 +10,8 @@ import com.davgeoand.api.exception.WorkoutException;
 import com.surrealdb.SurrealException;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.EndpointGroup;
+import io.javalin.config.JavalinConfig;
+import io.javalin.event.LifecycleEventListener;
 import io.javalin.http.HttpStatus;
 import io.javalin.micrometer.MicrometerPlugin;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
@@ -27,33 +29,41 @@ public class JavalinService {
     public JavalinService() {
         log.info("Initializing {}", SERVICE_NAME);
         javalin = Javalin.create(javalinConfig -> {
-            javalinConfig.router.apiBuilder(routes());
+            javalinConfig.routes.apiBuilder(routes());
             javalinConfig.router.contextPath = SERVICE_CONTEXT_PATH;
             javalinConfig.registerPlugin(micrometerRegistry());
+            javalinConfig.events.serverStarted(serverStartedEvents());
+            exceptionHandlers(javalinConfig);
         });
-        addExceptionHandlers();
         log.info("Initialized {}", SERVICE_NAME);
+    }
+
+    @WithSpan
+    private LifecycleEventListener serverStartedEvents() {
+        log.info("Adding server started events");
+        return () -> {
+            AdminController.addServiceInfo();
+        };
     }
 
     @WithSpan
     private MicrometerPlugin micrometerRegistry() {
         log.info("Adding micrometer registry");
-        return new MicrometerPlugin(
-                micrometerPluginConfig -> micrometerPluginConfig.registry = ServiceMeterRegistry.meterRegistry);
+        return new MicrometerPlugin(micrometerPluginConfig -> micrometerPluginConfig.registry = ServiceMeterRegistry.meterRegistry);
     }
 
     @WithSpan
-    private void addExceptionHandlers() {
+    private void exceptionHandlers(JavalinConfig javalinConfig) {
         log.info("Adding exception handlers");
-        javalin.exception(SurrealException.class, (e, context) -> {
+        javalinConfig.routes.exception(SurrealException.class, (e, context) -> {
             context.result(e.getMessage());
             context.status(HttpStatus.INTERNAL_SERVER_ERROR);
         });
-        javalin.exception(GroceryException.MissingException.class, (e, context) -> {
+        javalinConfig.routes.exception(GroceryException.MissingException.class, (e, context) -> {
             context.result(e.getMessage());
             context.status(HttpStatus.NOT_FOUND);
         });
-        javalin.exception(WorkoutException.MissingException.class, (e, context) -> {
+        javalinConfig.routes.exception(WorkoutException.MissingException.class, (e, context) -> {
             context.result(e.getMessage());
             context.status(HttpStatus.NOT_FOUND);
         });

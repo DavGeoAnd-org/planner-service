@@ -7,9 +7,9 @@ public class GroceryException {
         }
     }
 
-    public static class MissingItemException extends MissingException {
-        public MissingItemException(String itemId) {
-            super("Item does not exist: " + itemId);
+    public static class MissingStoreException extends MissingException {
+        public MissingStoreException(String storeId) {
+            super("Store does not exist: " + storeId);
         }
     }
 
@@ -19,9 +19,9 @@ public class GroceryException {
         }
     }
 
-    public static class MissingStoreException extends MissingException {
-        public MissingStoreException(String storeId) {
-            super("Store does not exist: " + storeId);
+    public static class MissingItemException extends MissingException {
+        public MissingItemException(String itemId) {
+            super("Item does not exist: " + itemId);
         }
     }
 }

@@ -6,7 +6,7 @@
 
     <groupId>com.davgeoand.api</groupId>
     <artifactId>planner-service</artifactId>
-    <version>2026.3.0</version>
+    <version>2026.3.1</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

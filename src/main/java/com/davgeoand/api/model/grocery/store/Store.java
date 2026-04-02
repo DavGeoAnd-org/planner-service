@@ -15,6 +15,6 @@ import lombok.*;
 public class Store {
     @JsonSerialize(using = RecordIdSerializer.class)
     @JsonDeserialize(using = RecordIdDeserializer.class)
-    public RecordId id;
-    public String name;
+    RecordId id;
+    String name;
 }

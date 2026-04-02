@@ -75,8 +75,8 @@ public class JavalinService {
         log.info("Adding routes");
         return () -> {
             path("admin", AdminController.getAdminEndpoints());
-            path("grocery", GroceryController.getGroceryEndpoints());
             path("health", HealthController.getHealthEndpoints());
+            path("grocery", GroceryController.getGroceryEndpoints());
             path("workout", WorkoutController.getWorkoutEndpoints());
         };
     }

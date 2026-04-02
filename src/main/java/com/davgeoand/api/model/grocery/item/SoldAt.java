@@ -17,8 +17,4 @@ public class SoldAt {
     @JsonDeserialize(using = RecordIdDeserializer.class)
     public RecordId id, in, out;
     public String location;
-
-    public SoldAt(String location) {
-        this.location = location;
-    }
 }

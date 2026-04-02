@@ -8,11 +8,10 @@ import java.util.List;
 
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemFullDetail {
-    Item item;
+public class ItemDetail extends Item {
     Category category;
     List<StoreWithLocation> stores;
 }

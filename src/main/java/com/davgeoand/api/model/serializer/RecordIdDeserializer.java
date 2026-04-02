@@ -16,7 +16,11 @@ public class RecordIdDeserializer extends StdDeserializer<RecordId> {
     @Override
     public RecordId deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         String id = p.getText();
-        int separatorIndex = id.indexOf(":");
-        return new RecordId(id.substring(0, separatorIndex), id.substring(separatorIndex + 1));
+        if (id.isEmpty()) {
+            return null;
+        } else {
+            int separatorIndex = id.indexOf(":");
+            return new RecordId(id.substring(0, separatorIndex), id.substring(separatorIndex + 1));
+        }
     }
 }

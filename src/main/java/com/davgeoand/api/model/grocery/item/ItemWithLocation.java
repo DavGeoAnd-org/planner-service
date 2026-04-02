@@ -1,4 +1,4 @@
-package com.davgeoand.api.model.grocery.store;
+package com.davgeoand.api.model.grocery.item;
 
 import lombok.*;
 
@@ -7,6 +7,6 @@ import lombok.*;
 @ToString(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoreWithLocation extends Store {
+public class ItemWithLocation extends Item {
     String location;
 }

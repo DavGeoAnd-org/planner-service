@@ -40,7 +40,7 @@ public class WorkoutController {
     }
 
     private static void updateWorkout(@NotNull Context context) {
-        log.debug("request - updateExercise");
+        log.debug("{} - {}", context.method(), context.path());
         WorkoutDetail workoutDetail = context.bodyAsClass(WorkoutDetail.class);
         log.debug("workoutDetail - {}", workoutDetail);
         context.json(new RecordIdResponse("Updated Workout",
@@ -49,7 +49,7 @@ public class WorkoutController {
     }
 
     private static void updateExercise(@NotNull Context context) {
-        log.debug("request - updateExercise");
+        log.debug("{} - {}", context.method(), context.path());
         Exercise exercise = context.bodyAsClass(Exercise.class);
         log.debug("exercise - {}", exercise);
         context.json(new RecordIdResponse("Updated Exercise",
@@ -58,14 +58,14 @@ public class WorkoutController {
     }
 
     private static void workoutDetail(@NotNull Context context) {
-        log.debug("request - workout");
+        log.debug("{} - {}", context.method(), context.path());
         String id = context.pathParam("id");
         context.json(workoutService.workoutDetail(id))
                 .status(HttpStatus.OK);
     }
 
     private static void addWorkout(@NotNull Context context) {
-        log.debug("request - addWorkout");
+        log.debug("{} - {}", context.method(), context.path());
         WorkoutDetail workoutDetail = context.bodyAsClass(WorkoutDetail.class);
         log.debug("workoutDetail - {}", workoutDetail);
         context.json(new RecordIdResponse("Added Workout",
@@ -74,13 +74,13 @@ public class WorkoutController {
     }
 
     private static void allWorkouts(@NotNull Context context) {
-        log.debug("request - allWorkouts");
+        log.debug("{} - {}", context.method(), context.path());
         context.json(workoutService.allWorkouts())
                 .status(HttpStatus.OK);
     }
 
     private static void addExercise(@NotNull Context context) {
-        log.debug("request - addExercise");
+        log.debug("{} - {}", context.method(), context.path());
         Exercise exercise = context.bodyAsClass(Exercise.class);
         log.debug("exercise - {}", exercise);
         context.json(new RecordIdResponse("Added Exercise",
@@ -89,7 +89,7 @@ public class WorkoutController {
     }
 
     private static void allExercises(@NotNull Context context) {
-        log.debug("request - allExercises");
+        log.debug("{} - {}", context.method(), context.path());
         context.json(workoutService.allExercises())
                 .status(HttpStatus.OK);
     }

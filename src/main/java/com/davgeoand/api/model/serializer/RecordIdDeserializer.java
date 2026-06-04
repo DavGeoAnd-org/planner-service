@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.surrealdb.RecordId;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.IOException;
 
@@ -15,12 +16,18 @@ public class RecordIdDeserializer extends StdDeserializer<RecordId> {
 
     @Override
     public RecordId deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        String id = p.getText();
-        if (id.isEmpty()) {
+        String recordId = p.getText();
+        if (recordId.isEmpty()) {
             return null;
         } else {
-            int separatorIndex = id.indexOf(":");
-            return new RecordId(id.substring(0, separatorIndex), id.substring(separatorIndex + 1));
+            int separatorIndex = recordId.indexOf(":");
+            String table = recordId.substring(0, separatorIndex);
+            String id = recordId.substring(separatorIndex + 1);
+            if (NumberUtils.isCreatable(id)) {
+                return new RecordId(table, Long.parseLong(id));
+            } else {
+                return new RecordId(table, id);
+            }
         }
     }
 }

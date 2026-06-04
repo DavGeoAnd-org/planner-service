@@ -1,7 +1,6 @@
 package com.davgeoand.api.data;
 
 import com.davgeoand.api.ServiceProperties;
-import com.davgeoand.api.exception.JavalinServiceException;
 import com.davgeoand.api.model.workout.Exercise;
 import com.davgeoand.api.model.workout.Workout;
 import com.davgeoand.api.model.workout.WorkoutDetail;
@@ -19,10 +18,10 @@ import java.util.Optional;
 @Slf4j
 public class WorkoutDB {
     private final Surreal driver;
-    private final String SURREALDB_CONNECT = ServiceProperties.getProperty("surrealdb.connect").orElseThrow(() -> new JavalinServiceException.MissingPropertyException("surrealdb.connect"));
-    private final String SURREALDB_NAMESPACE = ServiceProperties.getProperty("surrealdb.namespace").orElseThrow(() -> new JavalinServiceException.MissingPropertyException("surrealdb.namespace"));
-    private final String SURREALDB_USERNAME = ServiceProperties.getProperty("surrealdb.username").orElseThrow(() -> new JavalinServiceException.MissingPropertyException("surrealdb.username"));
-    private final String SURREALDB_PASSWORD = ServiceProperties.getProperty("surrealdb.password").orElseThrow(() -> new JavalinServiceException.MissingPropertyException("surrealdb.password"));
+    private final String SURREALDB_CONNECT = ServiceProperties.getProperty("surrealdb.connect");
+    private final String SURREALDB_NAMESPACE = ServiceProperties.getProperty("surrealdb.namespace");
+    private final String SURREALDB_USERNAME = ServiceProperties.getProperty("surrealdb.username");
+    private final String SURREALDB_PASSWORD = ServiceProperties.getProperty("surrealdb.password");
 
     public WorkoutDB() {
         log.info("Initializing workout db");
@@ -84,7 +83,7 @@ public class WorkoutDB {
     @WithSpan(kind = SpanKind.CLIENT)
     public WorkoutDetail selectWorkoutDetail(RecordId id) {
         log.debug("id - {}", id);
-        Response response = driver.queryBind(
+        Response response = driver.query(
                 """
                         SELECT *,
                             (SELECT order, note,
@@ -110,7 +109,7 @@ public class WorkoutDB {
     @WithSpan(kind = SpanKind.CLIENT)
     public void removeWorkoutStepsFromWorkout(RecordId id) {
         log.debug("id - {}", id);
-        Response response = driver.queryBind(
+        Response response = driver.query(
                 "DELETE workout_steps WHERE in = $id RETURN BEFORE;",
                 Map.of("id", id));
         Array results = response.take(0).getArray();

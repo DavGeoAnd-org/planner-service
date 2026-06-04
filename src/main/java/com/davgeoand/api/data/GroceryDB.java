@@ -1,7 +1,6 @@
 package com.davgeoand.api.data;
 
 import com.davgeoand.api.ServiceProperties;
-import com.davgeoand.api.exception.JavalinServiceException.MissingPropertyException;
 import com.davgeoand.api.model.grocery.category.Category;
 import com.davgeoand.api.model.grocery.category.CategoryDetail;
 import com.davgeoand.api.model.grocery.category.CategoryWithStoreListStatus;
@@ -24,10 +23,10 @@ import java.util.Optional;
 @Slf4j
 public class GroceryDB {
     private final Surreal driver;
-    private final String SURREALDB_CONNECT = ServiceProperties.getProperty("surrealdb.connect").orElseThrow(() -> new MissingPropertyException("surrealdb.connect"));
-    private final String SURREALDB_NAMESPACE = ServiceProperties.getProperty("surrealdb.namespace").orElseThrow(() -> new MissingPropertyException("surrealdb.namespace"));
-    private final String SURREALDB_USERNAME = ServiceProperties.getProperty("surrealdb.username").orElseThrow(() -> new MissingPropertyException("surrealdb.username"));
-    private final String SURREALDB_PASSWORD = ServiceProperties.getProperty("surrealdb.password").orElseThrow(() -> new MissingPropertyException("surrealdb.password"));
+    private final String SURREALDB_CONNECT = ServiceProperties.getProperty("surrealdb.connect");
+    private final String SURREALDB_NAMESPACE = ServiceProperties.getProperty("surrealdb.namespace");
+    private final String SURREALDB_USERNAME = ServiceProperties.getProperty("surrealdb.username");
+    private final String SURREALDB_PASSWORD = ServiceProperties.getProperty("surrealdb.password");
 
     public GroceryDB() {
         log.info("Initializing grocery db");
@@ -118,7 +117,7 @@ public class GroceryDB {
     @WithSpan(kind = SpanKind.CLIENT)
     public ItemDetail itemDetail(RecordId itemId) {
         log.debug("itemId - {}", itemId);
-        Response response = driver.queryBind("""
+        Response response = driver.query("""
                         SELECT *,
                         array::first(->product_of.out.*) AS category,
                         (SELECT location, out.id AS id, out.name AS name FROM $parent->sold_at) AS stores
@@ -142,13 +141,13 @@ public class GroceryDB {
     @WithSpan(kind = SpanKind.CLIENT)
     public void removeProductOfFromItem(RecordId itemId) {
         log.debug("itemId - {}", itemId);
-        driver.queryBind("DELETE product_of WHERE in == ($itemId);", Map.of("itemId", itemId));
+        driver.query("DELETE product_of WHERE in == ($itemId);", Map.of("itemId", itemId));
     }
 
     @WithSpan(kind = SpanKind.CLIENT)
     public void removeSoldAtFromItem(RecordId itemId) {
         log.debug("itemId - {}", itemId);
-        driver.queryBind("DELETE sold_at WHERE in == ($itemId);", Map.of("itemId", itemId));
+        driver.query("DELETE sold_at WHERE in == ($itemId);", Map.of("itemId", itemId));
     }
 
     @WithSpan(kind = SpanKind.CLIENT)
@@ -163,7 +162,7 @@ public class GroceryDB {
     @WithSpan(kind = SpanKind.CLIENT)
     public Iterator<StoreList> addCategoryToStoreLists(RecordId categoryId) {
         log.debug("categoryId - {}", categoryId);
-        Response response = driver.queryBind(
+        Response response = driver.query(
                 "RELATE (SELECT id FROM stores WHERE array::group(<-sold_at.in->product_of.out) CONTAINS $categoryId) -> store_list -> $categoryId;",
                 Map.of("categoryId", categoryId));
         return response.take(0).getArray().iterator(StoreList.class);
@@ -172,7 +171,7 @@ public class GroceryDB {
     @WithSpan(kind = SpanKind.CLIENT)
     public Iterator<StoreList> removeCategoryFromStoreLists(RecordId categoryId) {
         log.debug("categoryId - {}", categoryId);
-        Response response = driver.queryBind(
+        Response response = driver.query(
                 "DELETE store_list WHERE out = $categoryId RETURN BEFORE;",
                 Map.of("categoryId", categoryId));
         return response.take(0).getArray().iterator(StoreList.class);
@@ -181,7 +180,7 @@ public class GroceryDB {
     @WithSpan(kind = SpanKind.CLIENT)
     public CategoryDetail categoryDetail(RecordId categoryId) {
         log.debug("categoryId - {}", categoryId);
-        Response response = driver.queryBind(
+        Response response = driver.query(
                 """
                         SELECT *,
                         <-product_of.in.* AS items
@@ -193,7 +192,7 @@ public class GroceryDB {
     @WithSpan(kind = SpanKind.CLIENT)
     public StoreDetail storeDetail(RecordId storeId) {
         log.debug("storeId - {}", storeId);
-        Response response = driver.queryBind(
+        Response response = driver.query(
                 """
                         SELECT *,
                         ->store_list.out.* AS categories
@@ -206,7 +205,7 @@ public class GroceryDB {
     public Iterator<ItemWithLocation> getItemsForCategoryAtStore(RecordId storeId, RecordId categoryId) {
         log.debug("storeId - {}", storeId);
         log.debug("categoryId - {}", categoryId);
-        Response response = driver.queryBind(
+        Response response = driver.query(
                 """
                         SELECT *,
                         array::first(->(sold_at WHERE out == $storeId).location) AS location

@@ -21,23 +21,29 @@ public class AdminController {
         return () -> {
             get("health", AdminController::health);
             get("metrics", AdminController::metrics);
+            get("properties", AdminController::properties);
         };
     }
 
+    private static void properties(@NotNull Context context) {
+        log.debug("{} - {}", context.method(), context.path());
+        context.json(adminService.properties())
+                .status(HttpStatus.OK);
+    }
+
     private static void metrics(@NotNull Context context) {
-        log.debug("request - metrics");
+        log.debug("{} - {}", context.method(), context.path());
         context.json(adminService.metrics())
                 .status(HttpStatus.OK);
     }
 
     private static void health(@NotNull Context context) {
-        log.debug("request - health");
+        log.debug("{} - {}", context.method(), context.path());
         context.json(new MessageResponse(adminService.health()))
                 .status(HttpStatus.OK);
     }
 
     public static void addServiceInfo() {
-        log.debug("function - addServiceInfo");
         adminService.addServiceInfo();
     }
 }

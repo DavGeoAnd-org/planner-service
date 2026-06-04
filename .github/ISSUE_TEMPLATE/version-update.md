@@ -7,5 +7,5 @@ assignees: DavGeoAnd
 
 ---
 
-- update dependencies and plugins in pom.xml
+- update service, dependencies and plugins version in pom.xml
 - update the image used in Dockerfile

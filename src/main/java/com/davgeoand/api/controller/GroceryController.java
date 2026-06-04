@@ -59,7 +59,7 @@ public class GroceryController {
     }
 
     private static void getItemsForCategoryAtStore(@NotNull Context context) {
-        log.debug("request - getItemsForCategoryAtStore");
+        log.debug("{} - {}", context.method(), context.path());
         String storeId = context.pathParam("storeId");
         log.debug("storeId - {}", storeId);
         String categoryId = context.pathParam("categoryId");
@@ -69,7 +69,7 @@ public class GroceryController {
     }
 
     private static void removeCategoryFromStoreLists(@NotNull Context context) {
-        log.debug("request - removeCategoryFromStoreLists");
+        log.debug("{} - {}", context.method(), context.path());
         String categoryId = context.pathParam("categoryId");
         log.debug("categoryId - {}", categoryId);
         context.json(groceryService.removeCategoryFromStoreLists(categoryId).stream()
@@ -78,7 +78,7 @@ public class GroceryController {
     }
 
     private static void addCategoryToStoreLists(@NotNull Context context) {
-        log.debug("request - addCategoryToStoreLists");
+        log.debug("{} - {}", context.method(), context.path());
         String categoryId = context.pathParam("categoryId");
         log.debug("categoryId - {}", categoryId);
         context.json(groceryService.addCategoryToStoreLists(categoryId).stream()
@@ -87,7 +87,7 @@ public class GroceryController {
     }
 
     private static void updateItem(@NotNull Context context) {
-        log.debug("request - updateItem");
+        log.debug("{} - {}", context.method(), context.path());
         ItemDetail itemDetail = context.bodyAsClass(ItemDetail.class);
         log.debug("itemDetail - {}", itemDetail);
         context.json(new RecordIdResponse("Updated Item",
@@ -96,7 +96,7 @@ public class GroceryController {
     }
 
     private static void removeItem(@NotNull Context context) {
-        log.debug("request - removeItem");
+        log.debug("{} - {}", context.method(), context.path());
         String itemId = context.pathParam("itemId");
         log.debug("itemId - {}", itemId);
         context.json(new RecordIdResponse("Removed Item", groceryService.removeItem(itemId).getId()))
@@ -104,7 +104,7 @@ public class GroceryController {
     }
 
     private static void item(@NotNull Context context) {
-        log.debug("request - item");
+        log.debug("{} - {}", context.method(), context.path());
         String itemId = context.pathParam("itemId");
         log.debug("itemId - {}", itemId);
         boolean detail = Boolean.parseBoolean(StringUtils.defaultIfBlank(context.queryParam("detail"), "false"));
@@ -114,7 +114,7 @@ public class GroceryController {
     }
 
     private static void addItem(@NotNull Context context) {
-        log.debug("request - addItem");
+        log.debug("{} - {}", context.method(), context.path());
         boolean detail = Boolean.parseBoolean(StringUtils.defaultIfBlank(context.queryParam("detail"), "false"));
         log.debug("detail - {}", detail);
         RecordId responseId;
@@ -132,13 +132,13 @@ public class GroceryController {
     }
 
     private static void allItems(@NotNull Context context) {
-        log.debug("request - allItems");
+        log.debug("{} - {}", context.method(), context.path());
         context.json(groceryService.allItems())
                 .status(HttpStatus.OK);
     }
 
     private static void removeCategory(@NotNull Context context) {
-        log.debug("request - removeCategory");
+        log.debug("{} - {}", context.method(), context.path());
         String categoryId = context.pathParam("categoryId");
         log.debug("categoryId - {}", categoryId);
         context.json(new RecordIdResponse("Removed Category", groceryService.removeCategory(categoryId).getId()))
@@ -146,7 +146,7 @@ public class GroceryController {
     }
 
     private static void category(@NotNull Context context) {
-        log.debug("request - category");
+        log.debug("{} - {}", context.method(), context.path());
         String categoryId = context.pathParam("categoryId");
         log.debug("categoryId - {}", categoryId);
         boolean detail = Boolean.parseBoolean(StringUtils.defaultIfBlank(context.queryParam("detail"), "false"));
@@ -156,7 +156,7 @@ public class GroceryController {
     }
 
     private static void addCategory(@NotNull Context context) {
-        log.debug("request - addCategory");
+        log.debug("{} - {}", context.method(), context.path());
         Category category = context.bodyAsClass(Category.class);
         log.debug("category - {}", category);
         context.json(new RecordIdResponse("Added Category", groceryService.addCategory(category)))
@@ -164,7 +164,7 @@ public class GroceryController {
     }
 
     private static void allCategories(@NotNull Context context) {
-        log.debug("request - allCategories");
+        log.debug("{} - {}", context.method(), context.path());
         boolean status = Boolean.parseBoolean(StringUtils.defaultIfBlank(context.queryParam("status"), "false"));
         log.debug("status - {}", status);
         context.json(status ? groceryService.allCategoriesWithStoreListStatus() : groceryService.allCategories())
@@ -172,7 +172,7 @@ public class GroceryController {
     }
 
     private static void removeStore(@NotNull Context context) {
-        log.debug("request - removeStore");
+        log.debug("{} - {}", context.method(), context.path());
         String storeId = context.pathParam("storeId");
         log.debug("storeId - {}", storeId);
         context.json(new RecordIdResponse("Removed Store", groceryService.removeStore(storeId).getId()))
@@ -180,7 +180,7 @@ public class GroceryController {
     }
 
     private static void store(@NotNull Context context) {
-        log.debug("request - store");
+        log.debug("{} - {}", context.method(), context.path());
         String storeId = context.pathParam("storeId");
         log.debug("storeId - {}", storeId);
         boolean detail = Boolean.parseBoolean(StringUtils.defaultIfBlank(context.queryParam("detail"), "false"));
@@ -190,7 +190,7 @@ public class GroceryController {
     }
 
     private static void addStore(@NotNull Context context) {
-        log.debug("request - addStore");
+        log.debug("{} - {}", context.method(), context.path());
         Store store = context.bodyAsClass(Store.class);
         log.debug("store - {}", store);
         context.json(new RecordIdResponse("Added Store", groceryService.addStore(store)))
@@ -198,7 +198,7 @@ public class GroceryController {
     }
 
     private static void allStores(@NotNull Context context) {
-        log.debug("request - allStores");
+        log.debug("{} - {}", context.method(), context.path());
         context.json(groceryService.allStores())
                 .status(HttpStatus.OK);
     }

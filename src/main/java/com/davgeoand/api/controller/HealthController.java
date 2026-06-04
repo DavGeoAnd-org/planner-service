@@ -30,7 +30,7 @@ public class HealthController {
     }
 
     private static void weightRecordsByDayRange(@NotNull Context context) {
-        log.debug("request - weightRecordsByDayRange");
+        log.debug("{} - {}", context.method(), context.path());
         int days = Integer.parseInt(StringUtils.defaultIfBlank(context.queryParam("days"), "10"));
         log.debug("days - {}", days);
         context.json(healthService.weightRecordsByDayRange(days))
@@ -38,7 +38,7 @@ public class HealthController {
     }
 
     private static void addWeightRecord(@NotNull Context context) {
-        log.debug("request - addWeightRecord");
+        log.debug("{} - {}", context.method(), context.path());
         WeightRecord weightRecord = context.bodyAsClass(WeightRecord.class);
         log.debug("weightRecord - {}", weightRecord);
         context.json(new MessageResponse(healthService.addWeightRecord(weightRecord).getId().getId().getLong() + ""))
@@ -46,7 +46,7 @@ public class HealthController {
     }
 
     private static void allWeightRecords(@NotNull Context context) {
-        log.debug("request - allWeightRecords");
+        log.debug("{} - {}", context.method(), context.path());
         context.json(healthService.allWeightRecords())
                 .status(HttpStatus.OK);
     }

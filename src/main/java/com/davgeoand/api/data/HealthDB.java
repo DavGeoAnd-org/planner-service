@@ -1,7 +1,6 @@
 package com.davgeoand.api.data;
 
 import com.davgeoand.api.ServiceProperties;
-import com.davgeoand.api.exception.JavalinServiceException;
 import com.davgeoand.api.model.health.WeightRecord;
 import com.surrealdb.Response;
 import com.surrealdb.Surreal;
@@ -18,10 +17,10 @@ import java.util.Map;
 @Slf4j
 public class HealthDB {
     private final Surreal driver;
-    private final String SURREALDB_CONNECT = ServiceProperties.getProperty("surrealdb.connect").orElseThrow(() -> new JavalinServiceException.MissingPropertyException("surrealdb.connect"));
-    private final String SURREALDB_NAMESPACE = ServiceProperties.getProperty("surrealdb.namespace").orElseThrow(() -> new JavalinServiceException.MissingPropertyException("surrealdb.namespace"));
-    private final String SURREALDB_USERNAME = ServiceProperties.getProperty("surrealdb.username").orElseThrow(() -> new JavalinServiceException.MissingPropertyException("surrealdb.username"));
-    private final String SURREALDB_PASSWORD = ServiceProperties.getProperty("surrealdb.password").orElseThrow(() -> new JavalinServiceException.MissingPropertyException("surrealdb.password"));
+    private final String SURREALDB_CONNECT = ServiceProperties.getProperty("surrealdb.connect");
+    private final String SURREALDB_NAMESPACE = ServiceProperties.getProperty("surrealdb.namespace");
+    private final String SURREALDB_USERNAME = ServiceProperties.getProperty("surrealdb.username");
+    private final String SURREALDB_PASSWORD = ServiceProperties.getProperty("surrealdb.password");
 
     public HealthDB() {
         log.info("Initializing health db");
@@ -54,7 +53,7 @@ public class HealthDB {
     @WithSpan(kind = SpanKind.CLIENT)
     public Iterator<WeightRecord> weightRecordsByDayRange(int days) {
         log.debug("days - {}", days);
-        Response response = driver.queryBind("""
+        Response response = driver.query("""
                         SELECT *
                         FROM weightRecords
                         WHERE record::id(id) > $days;""",

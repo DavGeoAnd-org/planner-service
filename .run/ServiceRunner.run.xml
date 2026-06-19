@@ -1,8 +1,8 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="ServiceRunner" type="Application" factoryName="Application" nameIsGenerated="true">
     <envs>
-      <env name="JAVALIN_SERVICE_LOGGING" value="DEBUG" />
       <env name="EVENT_HANDLER_TYPE" value="influxdb" />
+      <env name="JAVALIN_SERVICE_LOGGING" value="DEBUG" />
       <env name="OTEL_RESOURCE_ATTRIBUTES" value="deployment.environment=local,service.framework=javalin,service.name=planner-service,service.namespace=planner" />
       <env name="OTEL_RESOURCE_DISABLED_KEYS" value="host.arch,os.description,os.type,os.version,process.command_args,process.command_line,process.executable.path,process.pid,process.runtime.description,process.runtime.name,aws.ecs.cluster.arn,aws.ecs.container.arn,aws.ecs.container.image.id,aws.ecs.task.arn,aws.log.group.arns,aws.log.group.names,aws.log.stream.arns,aws.log.stream.names,cloud.resource_id" />
     </envs>

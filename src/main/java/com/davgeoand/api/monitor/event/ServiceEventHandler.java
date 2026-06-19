@@ -22,8 +22,12 @@ public class ServiceEventHandler {
 
     public static void init() {
         log.info("Initializing service event handler");
-        String eventHandlerType = ServiceProperties.getProperty("event.handler.type");
-        eventHandler = (eventHandlerType.equals("influxdb") ? new InfluxEventHandler() : new LogEventHandler());
+        try {
+            eventHandler = (ServiceProperties.getProperty("event.handler.type").equals("influxdb") ? new InfluxEventHandler() : new LogEventHandler());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            eventHandler = new LogEventHandler();
+        }
         addMetersToMeterRegistry();
         Thread eventHandlerThread = new Thread(eventHandler);
         eventHandlerThread.setName("ServiceEventHandler");

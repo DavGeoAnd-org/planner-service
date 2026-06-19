@@ -78,7 +78,7 @@ public class ServiceProperties {
         properties.put("context.path", StringUtils.defaultIfBlank(System.getenv("CONTEXT_PATH"), "/planner"));
         properties.put("event.handler.type", StringUtils.defaultIfBlank(System.getenv("EVENT_HANDLER_TYPE"), "log"));
         properties.put("event.handler.influxdb.host", StringUtils.defaultIfBlank(System.getenv("EVENT_HANDLER_INFLUXDB_HOST"), "http://localhost:8181"));
-        properties.put("event.handler.influxdb.token", StringUtils.defaultIfBlank(System.getenv("EVENT_HANDLER_INFLUXDB_TOKEN"), "apiv3_TaL3gOCmok0FWS_OeBAocsVNs9TTC9BKcdllsa4swL6bD9Sb0H1tSlOgu6Xwwk2D6HvFBHxAL9-Wdr1T5Rr7Gg"));
+        properties.put("event.handler.influxdb.token", StringUtils.defaultIfBlank(System.getenv("EVENT_HANDLER_INFLUXDB_TOKEN"), "apiv3_hjhSehgKdbeUrRKOHpQzrFegAvsqAH5m-TSpW7OVXuoBwNC0pRSjWZZWsEuPg-lWNRY6coybqVl2bVDA8s2yvg"));
         properties.put("event.handler.influxdb.database", StringUtils.defaultIfBlank(System.getenv("EVENT_HANDLER_INFLUXDB_DATABASE"), "services"));
         properties.put("property.files", StringUtils.defaultIfBlank(System.getenv("PROPERTY_FILES"), "build.properties"));
         properties.put("surrealdb.connect", StringUtils.defaultIfBlank(System.getenv("SURREALDB_CONNECT"), "http://localhost:8000"));

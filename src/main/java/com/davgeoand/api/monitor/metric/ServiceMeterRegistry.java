@@ -17,10 +17,7 @@ public class ServiceMeterRegistry {
     protected static MeterRegistry meterRegistry;
 
     static {
-        Metrics.globalRegistry.getRegistries().stream()
-                .filter(registry -> registry.getClass().getName().contains("OpenTelemetryMeterRegistry"))
-                .findAny()
-                .ifPresentOrElse((foundRegistry) -> meterRegistry = foundRegistry, () -> meterRegistry = new SimpleMeterRegistry());
+        Metrics.globalRegistry.getRegistries().stream().filter(registry -> registry.getClass().getName().contains("OpenTelemetryMeterRegistry")).findAny().ifPresentOrElse((foundRegistry) -> meterRegistry = foundRegistry, () -> meterRegistry = new SimpleMeterRegistry());
     }
 
     public static List<Meter> getMeters() {

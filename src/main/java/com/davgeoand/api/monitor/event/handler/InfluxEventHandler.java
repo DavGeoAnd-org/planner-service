@@ -18,6 +18,7 @@ public class InfluxEventHandler implements EventHandler {
     public InfluxEventHandler() {
         log.info("Initializing influxdb service event handler");
         influxDBClient = InfluxDBClient.getInstance(ServiceProperties.getProperty("event.handler.influxdb.host"), ServiceProperties.getProperty("event.handler.influxdb.token").toCharArray(), ServiceProperties.getProperty("event.handler.influxdb.database"));
+        log.debug("InfluxDB Server Version: {}", influxDBClient.getServerVersion());
         ServiceProperties.getOtlpProperties().forEach((key, value) -> tagsMap.put(key.toString(), value.toString()));
         log.info("Finished initializing influxdb service event handler");
     }

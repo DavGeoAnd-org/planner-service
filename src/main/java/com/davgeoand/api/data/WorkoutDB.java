@@ -24,10 +24,16 @@ public class WorkoutDB {
     private final String SURREALDB_PASSWORD = ServiceProperties.getProperty("surrealdb.password");
 
     public WorkoutDB() {
-        log.info("Initializing workout db");
-        driver = new Surreal();
-        connect();
-        log.info("Initialized workout db");
+        try {
+            log.info("Initializing workout db");
+            driver = new Surreal();
+            connect();
+            log.debug("SurrealDB Server Version: {}", driver.version());
+            log.info("Initialized workout db");
+        } catch (Exception exception) {
+            log.error("Issue initializing workout db", exception);
+            throw new RuntimeException();
+        }
     }
 
     @WithSpan(kind = SpanKind.CLIENT)

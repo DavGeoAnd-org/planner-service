@@ -12,8 +12,11 @@ public class ServiceRunner {
         Span span = GlobalOpenTelemetry.getTracer("JavalinService").spanBuilder("ServiceRunner").startSpan();
         try (Scope ignored = span.makeCurrent()) {
             javalinService = new JavalinService();
+        } catch (Exception e) {
+            throw new RuntimeException();
+        } finally {
+            span.end();
         }
-        span.end();
         javalinService.start();
     }
 }

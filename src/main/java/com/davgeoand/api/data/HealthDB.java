@@ -23,10 +23,16 @@ public class HealthDB {
     private final String SURREALDB_PASSWORD = ServiceProperties.getProperty("surrealdb.password");
 
     public HealthDB() {
-        log.info("Initializing health db");
-        driver = new Surreal();
-        connect();
-        log.info("Initialized health db");
+        try {
+            log.info("Initializing health db");
+            driver = new Surreal();
+            connect();
+            log.debug("SurrealDB Server Version: {}", driver.version());
+            log.info("Initialized health db");
+        } catch (Exception exception) {
+            log.error("Issue initializing health db", exception);
+            throw new RuntimeException();
+        }
     }
 
     @WithSpan(kind = SpanKind.CLIENT)

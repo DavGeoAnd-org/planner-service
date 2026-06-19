@@ -10,7 +10,7 @@ on:
 
 env:
   SERVICE_ENV: test
-  REGISTRY: davgeoand9
+  REGISTRY: davidgandalcio
   REPOSITORY: planner-service
   AWS_REGION: us-east-1
   S3_BUCKET: homeproject-services-s3-bucket-396607284401
@@ -25,9 +25,9 @@ jobs:
 
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - uses: dorny/paths-filter@v3
+      - uses: dorny/paths-filter@v4
         id: changes
         with:
           filters: |
@@ -39,7 +39,7 @@ jobs:
         uses: jactions/maven-version@v1.2.0
 
       - name: Set up JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '21'
@@ -59,7 +59,7 @@ jobs:
           echo "image=$REGISTRY/$REPOSITORY:${{ steps.get-version.outputs.version }}-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
       - name: Configure AWS Creds
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

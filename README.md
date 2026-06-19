@@ -13,6 +13,7 @@
 * Change "service.namespace" value in .run → ServiceRunner.run.xml
 * Change "Path pattern" value in README.md
 * Change "Health check path" value in README.md
+* Change "ports" value in docker-compose.yml that isn't used by other services
 * Run maven compile
 
 ## VPC

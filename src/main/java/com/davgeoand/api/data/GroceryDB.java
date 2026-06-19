@@ -29,10 +29,16 @@ public class GroceryDB {
     private final String SURREALDB_PASSWORD = ServiceProperties.getProperty("surrealdb.password");
 
     public GroceryDB() {
-        log.info("Initializing grocery db");
-        driver = new Surreal();
-        connect();
-        log.info("Initialized grocery db");
+        try {
+            log.info("Initializing grocery db");
+            driver = new Surreal();
+            connect();
+            log.debug("SurrealDB Server Version: {}", driver.version());
+            log.info("Initialized grocery db");
+        } catch (Exception exception) {
+            log.error("Issue initializing grocery db", exception);
+            throw new RuntimeException();
+        }
     }
 
     @WithSpan(kind = SpanKind.CLIENT)

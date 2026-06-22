@@ -36,7 +36,6 @@ public class JavalinService {
             javalinConfig.startup.showJavalinBanner = false;
             javalinConfig.startup.showOldJavalinVersionWarning = false;
             exceptionHandlers(javalinConfig);
-            javalinConfig.bundledPlugins.enableCors(corsPluginConfig -> corsPluginConfig.addRule(CorsPluginConfig.CorsRule::anyHost));
         });
         ServiceEventHandler.init();
         log.info("Finished initializing {}", SERVICE_NAME);
